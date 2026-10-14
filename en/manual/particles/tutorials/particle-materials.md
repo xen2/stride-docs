@@ -29,7 +29,7 @@ The **red particle system** has a very simple customization. Since the [material
 First, create a shader (`ComputeColorRed.sdsl`) with a derived class for `ComputeColor`:
 
   ```cs
-class ComputeColorRed : ComputeColor
+shader ComputeColorRed : ComputeColor
 {
     override float4 Compute()
     {
@@ -53,7 +53,7 @@ Once the shader is loaded, you can access it in the **Property Grid** under the 
 The particles are red. With Game Studio running, edit and save `ComputeColorRed.sdsl` to make them yellow.
 
   ```cs
-class ComputeColorRed : ComputeColor
+shader ComputeColorRed : ComputeColor
 {
     override float4 Compute()
     {
@@ -71,8 +71,10 @@ For the next shader we'll use texture coordinates expose arbitrary values to the
 Check `ComputeColorRadial.sdsl`.
 
   ```cs
-class ComputeColorRadial<float4 ColorCenter, float4 ColorEdge> : ComputeColor, Texturing
+shader ComputeColorRadial<float4 ColorCenter, float4 ColorEdge> : ComputeColor
 {
+    import Texturing;
+
     override float4 Compute()
     {
         float radialDistance = length(streams.TexCoord - float2(0.5, 0.5)) * 2;
@@ -92,7 +94,7 @@ class ComputeColorRadial<float4 ColorCenter, float4 ColorEdge> : ComputeColor, T
 
 This is similar to `ComputeColorRed` and can be compiled and loaded the same way.
 
-There are several key differences. The shader now inherits from the `Texturing` shader base class as well. This allows it to use texture coordinates in from the streams. On the material side in Game Studio, we can force the texture coordinates to be streamed in case we don't use texture animation.
+There are several key differences. The shader now imports the `Texturing` [module](../../graphics/effects-and-shaders/shading-language/shaders-and-modules.md) as well. This allows it to use texture coordinates in from the streams. On the material side in Game Studio, we can force the texture coordinates to be streamed in case we don't use texture animation.
 
 The input values `float4 ColorCenter` and `float4 ColorEdge` in our shader are permutations. When we load the shader the Property Grid displays them under the **Generics** dictionary.
 
@@ -114,7 +116,7 @@ If we define more streams in our shader (`ParticleCustomShader`), they're export
     // -------------------------------------
     // streams
     // -------------------------------------
-    stage float4 SomeRandomKey;
+    module float4 SomeRandomKey;
 ```
 
 The generated .cs file should now contain:
@@ -168,16 +170,18 @@ Let's look at `ParticleCustomShader.sdsl`:
 
   ```cs
 
-class ParticleCustomShader : ParticleBase
+shader ParticleCustomShader
 {
+    import ParticleBase;
+
     // This shader can be set by the user, and it's a binary tree made up from smaller shaders
     compose ComputeColor  baseColor;
 
     // This shader can be set by the user, and it's a binary tree made up from smaller shaders
     compose ComputeColor  baseIntensity;
 
-    // Shading of the sprite — we override the base class's Shading(), which only returns ColorScale
-    stage override float4 Shading()
+    // Shading of the sprite — we override the base module's Shading(), which only returns ColorScale
+    module override float4 Shading()
     {
         // -----------------------------------------------
         // Base particle color RGB
@@ -197,7 +201,7 @@ class ParticleCustomShader : ParticleBase
 };
 ```
 
-It defines two composed shaders, `baseColor` and `baseIntensity`, where we'll plug our generated shaders for RGB and A respectively. It inherits `ParticleBase` which already defines `VSMain`, `PSMain` and texturing, and uses very simple `Shading()` method.
+It defines two composed shaders, `baseColor` and `baseIntensity`, where we'll plug our generated shaders for RGB and A respectively. It imports the `ParticleBase` module, which already defines `VSMain`, `PSMain` and texturing, and uses a very simple `Shading()` method. `Shading()` runs once per effect, so the override is a `module override`.
 
 By overriding the `Shading()` method we can define our custom behavior. Because the composed shaders we use are derived from `ComputeColor`, we can easily evaluate them using `Compute()`, which gives us the root of the compute tree for color and intensity.
 

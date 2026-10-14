@@ -13,7 +13,7 @@ You can also use custom shaders to create custom post effects. For more informat
 
 ### Option 1: Using Visual Studio (Recommended for Game Studio workflow)
 
-1. Make sure you have the [Stride Visual Studio extension](../../get-started/visual-studio-extension.md) installed. This is necessary to convert the shader files from SDSL ([Stride shading language](index.md)) to `.cs` files.
+1. Make sure you have the [Stride Visual Studio extension](../../get-started/visual-studio-extension.md) installed. This is necessary to convert the shader files from SDSL ([Stride shading language](shading-language/index.md)) to `.cs` files.
 
 2. In Game Studio, in the toolbar, click ![Open in IDE](../../get-started/media/launch-your-game-IDE-icon.webp) (**Open in IDE**) to open your project in Visual Studio.
 
@@ -35,7 +35,7 @@ You can also use custom shaders to create custom post effects. For more informat
 
 6. Open the `.sdsl` file, remove the existing lines, and write your shader.
 
-    Shaders are written in Stride Shading Language (SDSL), which is based on HLSL. For more information, see [Shading language](index.md).
+    Shaders are written in the Stride shading language (SDSL), which is based on HLSL. For a short introduction, see the [Quick tour](shading-language/quick-tour.md).
 
     For example, this shader creates a green color (`RGBA 0;1;0;1`):
 
@@ -132,14 +132,16 @@ When the shaders are compiled, Stride substitutes template arguments with the va
 For example, the code below defines and uses the template argument `Frequency`:
 
 ```cs
-shader ComputeColorWave<float Frequency> : ComputeColor, Texturing
+shader ComputeColorWave<float Frequency> : ComputeColor
 {
     override float4 Compute()
-   {           
-        return sin((Global.Time) * 2 * 3.14 * Frequency);
+    {
+        return sin(Global.Time * 2 * 3.14 * Frequency);
     }
 };
 ```
+
+`Global.Time` is the time in seconds, from the engine module `Global`.
 
 ![Template argument](media/template-argument.png)
 
@@ -150,19 +152,24 @@ Parameters can be changed at runtime.
 For example, the code below defines and uses the dynamic parameter `Frequency`:
 
 ```cs
-shader ComputeColorWave: ComputeColor, Texturing
+shader ComputeColorWave : ComputeColor
 {
     cbuffer PerMaterial
     {
-        stage float Frequency = 1.0f;
+        module float Frequency = 1.0f;
     }
 
     override float4 Compute()
     {
-        return sin(( Global.Time ) * 2 * 3.14 * Frequency);
+        return sin(Global.Time * 2 * 3.14 * Frequency);
     }
 };
 ```
+
+`Frequency` is a `module` member: there is one for the whole effect, and its key is simply `ComputeColorWaveKeys.Frequency`. Without `module`, each material property that uses the shader would have its own `Frequency`, with the property's path added to the key name. For more information, see [Shaders and modules](shading-language/shaders-and-modules.md).
+
+> [!Note]
+> Before Stride 4.5, `module` was written `stage`. The project upgrade rewrites it.
 
 To modify the value at runtime, access and set it in the material parameter collection. For example, to change the `Frequency`, use:
 
@@ -178,13 +185,13 @@ myMaterial.Passes[myPassIndex].Parameters.Set(ComputeColorWaveKeys.Frequency, My
 This [composition](shading-language/composition.md) lets you set the `Frequency` in the Game Studio Property Grid:
 
 ```cs
-shader ComputeColorWave : ComputeColor, Texturing
+shader ComputeColorWave : ComputeColor
 {
     compose ComputeColor Frequency;
 
     override float4 Compute()
     {
-        return sin(( Global.Time ) * 2 * 3.14 * Frequency.Compute().r);
+        return sin(Global.Time * 2 * 3.14 * Frequency.Compute().r);
     }
 };
 ```
@@ -224,7 +231,8 @@ In the project, the **ComputeColorWaveNormal** shader is used in the **displacem
 
 ## See also
 
-* [Shading language](shading-language/index.md)
+* [Shading language (SDSL)](shading-language/index.md)
+* [Quick tour](shading-language/quick-tour.md)
 * [Custom color transforms](../post-effects/color-transforms/custom-color-transforms.md)
 * [Material attributes](../materials/material-attributes.md)
 * [Stride Visual Studio extension](../../get-started/visual-studio-extension.md)

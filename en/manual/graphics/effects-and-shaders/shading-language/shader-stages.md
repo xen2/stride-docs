@@ -12,6 +12,8 @@ The function for each stage has a predefined name, so we recommend you don't cha
 
 These are all void methods.
 
+The entry points exist once per effect. `VSMain` and `PSMain` are declared in the engine module `ShaderBase`, and `CSMain` in `ComputeShaderBase`: import the module, and override them with `module override` (see [Shaders and modules](shaders-and-modules.md)).
+
 The geometry and tessellation shaders need some kind of predefined structure as input and output. However, since Stride shaders are generic, it's impossible to know beforehand what the structure will be. As a result, these shaders use `Input` and `Output` structures that are automatically generated to fit the final shader.
 
 ## Vertex shader
@@ -21,7 +23,7 @@ A vertex shader has to set the variable with the semantic `SV_Position`. In `Sha
 For example:
 
 ```cs
-override stage void VSMain()
+module override void VSMain()
 {
 	...
 	streams.ShadingPosition = ...;
@@ -36,7 +38,7 @@ A pixel shader has to set the variable with the semantic `SV_Target`. In `Shader
 For example:
 
 ```cs
-override stage void PSMain()
+module override void PSMain()
 {
 	...
 	streams.ColorTarget = ...;
@@ -117,13 +119,28 @@ void CSMain()
 }
 ```
 
-You can inherit from `ComputeShaderBase` and override the `Compute` method.
+You can also import the engine module `ComputeShaderBase`, which declares `CSMain` and the thread streams, and override its `Compute` method:
+
+```cs
+shader MyComputeShader
+{
+	import ComputeShaderBase;
+
+	RWTexture2D<float4> Output;
+
+	module override void Compute()
+	{
+		Output[streams.DispatchThreadId.xy] = float4(1, 0, 0, 1);
+	}
+};
+```
 
 ## See also
 
-* [Effect language](../effect-language.md)
-* [Shading language index](index.md)
-    - [Shader classes, mixins, and inheritance](shader-classes-mixins-and-inheritance.md)
+* [Effects (SDFX)](../effect-language.md)
+* [Shading language (SDSL)](index.md)
+    - [Shaders and modules](shaders-and-modules.md)
+    - [Inheritance and overrides](shader-classes-mixins-and-inheritance.md)
     - [Composition](composition.md)
-    - [Templates](templates.md)
-    - [Shader stage input/output automatic management](automatic-shader-stage-input-output.md)
+    - [Streams and stage input/output](automatic-shader-stage-input-output.md)
+    - [Generics](templates.md)

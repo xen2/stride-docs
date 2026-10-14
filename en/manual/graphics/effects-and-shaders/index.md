@@ -16,7 +16,9 @@ An effect also often defines a set of parameters. To set these, you need to [bin
 
 ## Shaders
 
-Shaders are authored in the [Stride's shading language](shading-language/index.md), which is an extension of `HLSL`. They provide true composition of modular shaders via [inheritance](shading-language/shader-classes-mixins-and-inheritance.md), shader [mixins](shading-language/composition.md) and [automatic weaving of shader in-out attributes](shading-language/automatic-shader-stage-input-output.md).
+Shaders are written in the [Stride shading language (SDSL)](shading-language/index.md), an extension of `HLSL`. You build on the engine shaders instead of copying them: [inherit and override](shading-language/shader-classes-mixins-and-inheritance.md) their methods, use [modules](shading-language/shaders-and-modules.md) for code and state shared by the whole effect, plug shaders into [composition](shading-language/composition.md) slots, and let the compiler pass [streams](shading-language/automatic-shader-stage-input-output.md) between shader stages.
+
+To start, follow the [Custom shaders](custom-shaders.md) tutorial and the [Quick tour](shading-language/quick-tour.md).
 
 ## Effects
 
@@ -26,18 +28,20 @@ As some platforms can't compile shaders at runtime (eg iOS, Android, etc), effec
 
 ## Target everything
 
-Stride shaders are converted automatically to the target graphics platform — either plain `HLSL` for Direct3D or `SPIR-V` for Vulkan platforms.
-
-For mobile platforms, shaders are optimized by a GLSL optimizer to improve performance.
+Each shader is compiled once, then effects mix and compose the compiled shaders into SPIR-V. Stride converts it automatically to the target graphics platform: `SPIR-V` for Vulkan, `HLSL` for Direct3D, and `MSL` for Metal.
 
 ## In this section
 
-* [Effect language](effect-language.md)
-* [Shading language](shading-language/index.md)
-    - [Shader classes, mixins and inheritance](shading-language/shader-classes-mixins-and-inheritance.md)
-    - [Composition](shading-language/composition.md)
-    - [Compile shaders](compile-shaders.md)
-    - [Templates](shading-language/templates.md)
-    - [Shader stage input/output automatic management](shading-language/automatic-shader-stage-input-output.md)
 * [Custom shaders](custom-shaders.md)
-* [Shader development with Visual Studio Code](shader-development-vscode.md)
+* [Shading language (SDSL)](shading-language/index.md)
+    - [Quick tour](shading-language/quick-tour.md)
+    - [Shaders and modules](shading-language/shaders-and-modules.md)
+    - [Inheritance and overrides](shading-language/shader-classes-mixins-and-inheritance.md)
+    - [Composition](shading-language/composition.md)
+    - [Streams and stage input/output](shading-language/automatic-shader-stage-input-output.md)
+    - [Shader stages](shading-language/shader-stages.md)
+    - [Generics](shading-language/templates.md)
+* [Effects (SDFX)](effect-language.md)
+* Tools
+    - [Shader development with Visual Studio Code](shader-development-vscode.md)
+    - [Compile shaders](compile-shaders.md)

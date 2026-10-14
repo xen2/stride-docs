@@ -1,4 +1,4 @@
-# Automatic shader stage input/output
+# Streams and stage input/output
 
 <span class="badge text-bg-primary">Advanced</span>
 <span class="badge text-bg-success">Programmer</span>
@@ -117,7 +117,9 @@ Think of streams as global objects that you can access everywhere without specif
 >[!Note]
 >You don't have to create a semantic for these variables; the compiler creates them automatically. However, keep in mind that **the variables sharing the same semantic will be merged in the final shader**. This behavior can be useful when you want to use a stream variable locally without inheriting from the shader where it was declared.
 
-After you declare a stream, you can access it at any stage of your shader. The shader compiler takes care of everything. The variables just have to be visible from the calling code (ie in the inheritance hierarchy) like any other variable.
+After you declare a stream, you can access it at any stage of your shader. The shader compiler takes care of everything. The variables just have to be visible from the calling code (inherited, or from an imported [module](shaders-and-modules.md)) like any other variable.
+
+The engine declares its common streams in modules: for example `ShadingPosition` and `ColorTarget` in `ShaderBase`, `TexCoord` in `Texturing`, `PositionWS` in `PositionStream4`. Import the module to use them. A stream declared in a module exists once per effect; in a shader used in a [composition](composition.md), declare a stream shared with the rest of the effect as `module stream`.
 
 **Code:** Stream definition and use:
 
@@ -157,40 +159,46 @@ Let's look at the same HLSL shader as the first example but in SDSL.
 **Code:** Same shader in SDSL
 
 ```cs
-shader MyShader : ShaderBase
+shader MyShader
 {
+	import ShaderBase;
+
 	stream float4 pos : POSITION;
 	stream float4 col : COLOR;
 
-	override void VSMain()
+	module override void VSMain()
 	{
 		streams.ShadingPosition = streams.pos;
 	}
 
-	override void PSMain()
+	module override void PSMain()
 	{
 		streams.ColorTarget = streams.col;
 	}
 };
 ```
 
+`ShaderBase` is the engine module that declares the entry points `VSMain` and `PSMain` and the streams `ShadingPosition` and `ColorTarget`. They exist once per effect, so the overrides are `module override` (see [Shaders and modules](shaders-and-modules.md)).
+
 Now let's add the normal computation.
 
 **Code:** Modified shader in SDSL
 
 ```cs
-shader MyShader : ShaderBase
+shader MyShader
 {
+	import ShaderBase;
+
 	stream float4 pos : POSITION;
 	stream float4 col : COLOR;
 	stream float3 normal : NORMAL;
 
-	override void VSMain()
+	module override void VSMain()
 	{
 		streams.ShadingPosition = streams.pos;
 	}
 
-	override void PSMain()
+	module override void PSMain()
 	{
 		streams.ColorTarget = streams.col * max(streams.normal.z, 0.0);
 	}
@@ -203,9 +211,10 @@ In SDSL, adding a new attribute is as simple as adding it to the pool of streams
 
 ## See also
 
-* [Effect language](../effect-language.md)
-* [Shading language index](index.md)
-    - [Shader classes, mixins and inheritance](shader-classes-mixins-and-inheritance.md)
+* [Effects (SDFX)](../effect-language.md)
+* [Shading language (SDSL)](index.md)
+    - [Shaders and modules](shaders-and-modules.md)
+    - [Inheritance and overrides](shader-classes-mixins-and-inheritance.md)
     - [Composition](composition.md)
-    - [Templates](templates.md)
-	- [Shader stages](shader-stages.md)
+    - [Shader stages](shader-stages.md)
+    - [Generics](templates.md)

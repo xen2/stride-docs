@@ -1,204 +1,168 @@
-# Shader classes, mixins and inheritance
+# Inheritance and overrides
 
-Stride Shading Language (SDSL) is an extension of HLSL, which makes it closer to C# syntax and concepts. The language is object-oriented:
+<span class="badge text-bg-primary">Intermediate</span>
+<span class="badge text-bg-success">Programmer</span>
 
-- shader classes are the foundation of the code
-- shader classes contain methods and members
-- shader classes can be inherited, methods can be overridden
-- member types can be shader classes
+A shader can inherit other shaders and override their methods. This is how you change engine shaders without copying them.
 
-SDSL uses an original way to handle multiple inheritance. Inheritance is performed through mixins, so the order of inheritance is crucial:
+## Inherit and override
 
-- the order of inheritance defines the actual implementation of a method (the last override)
-- if a mixin appears several times in the inheritance, only the first occurrence is taken into account (as well as its members and methods)
-- to can call the previous implementation of a method, use `base.<method name>(<arguments>)`
-
-## Keywords
-
-SDSL uses the keywords as HLSL, and adds new ones:
-
-- `stage`: method and member keyword. This keyword makes sure the method or member is only defined once and is the same in the compositions.
-- `stream`: member keyword. The member is accessible at every stage of the shader. For more information, see [Automatic shader stage input/out](automatic-shader-stage-input-output.md).
-- `streams`: sort of global structure storing variables needed across several stages of the shader. For more information, see [Automatic shader stage input/out](automatic-shader-stage-input-output.md).
-- `override`: method keyword. If this keyword is missing, the compilation returns an error.
-- `abstract`: used in front of a method declaration (without a body).
-- `clone`: method keyword. When a method appears several times in the inheritance tree of a shader class, this keyword forces the creation of multiple instances of the method at each level of the inheritance instead of one. For more information, see [Composition](composition.md).
-- `Input`: for geometry and tessellation shaders. For more information, see [Shader stages](shader-stages.md).
-- `Output`: for geometry and tessellation shaders. For more information, see [Shader stages](shader-stages.md).
-- `Input2`: for tessellation shaders. For more information, see [Shader stages](shader-stages.md).
-- `Constants`: for tessellation shaders. For more information, see [Shader stages](shader-stages.md).
-
-## Abstract methods
-
-Abstract methods are available in SDSL. They should be prefixed with the `abstract` keyword. You can inherit from a shader class with abstract methods without having to implement them; the compiler will simply produce a harmless warning. However, you should implement it in your final shader to prevent a compilation error.
-
-## Annotations
-
-Like HLSL, annotations are available in SDSL. Some of the most useful ones are:
-
-- `[Color]` for float4 variables. The ParameterKey will have the type `Color4` instead of `Vector4`. It also specifies to Game Studio that this variable should be treated as a color, so you can edit it in Game Studio.
-- `[Link(...)]` specifies which ParameterKey to use to set this value. However, an independent default key is still created.
-- `[Map(...)]` specifies which ParameterKey to use to set this value. No new ParameterKey is created.
-- `[RenameLink]` prevents the creation of a ParameterKey. It should be used with `[Link()]`.
-
-### Example code: annotations
+A shader lists its parents after `:`. It sees their members and methods, and it can override their methods:
 
 ```cs
 shader BaseShader
 {
-	[Color] float4 myColor;
- 
-	[Link("ProjectKeys.MyTextureKey")]
-	[RenameLink]
-	Texture2D texture;
- 
-	[Map("Texturing.Texture0")] Texture2D defaultTexture;
+    float Compute()
+    {
+        return 1.0;
+    }
 };
-```
 
-## Example code: inheritance
-
-```cs
-shader BaseInterface
-{
-	abstract float Compute();
-};
- 
-shader BaseShader : BaseInterface
-{
-	float Compute()
-	{
-		return 1.0f;
-	}
-};
- 
 shader ShaderA : BaseShader
 {
-	override void Compute()
-	{
-		return 2.0f;
-	}
+    override float Compute()
+    {
+        return 2.0;
+    }
 };
- 
+
 shader ShaderB : BaseShader
 {
-	override void Compute()
-	{
-		float prevValue = base.Compute();
-		return (5.0f + prevValue);
-	}
+    override float Compute()
+    {
+        float previous = base.Compute();
+        return 5.0 + previous;
+    }
 };
 ```
 
-### Example code: the importance of inheritance order
+- An override needs the `override` keyword. A method with the same name and signature as an inherited one, but without `override`, is an error.
+- `base.Compute()` calls the method that this override replaces.
 
-Notice what happens when we change the inheritance order between `ShaderA` and `ShaderB`.
+Parents that are modules are imported, not inherited: see [Shaders and modules](shaders-and-modules.md). Overrides of module methods are written `module override`.
+
+## Abstract methods
+
+An `abstract` method has no body. A shader that inherits it can leave it abstract, but the final effect must contain a shader that overrides it.
+
+```cs
+shader ColorSource
+{
+    abstract float4 GetColor();
+};
+
+shader RedColorSource : ColorSource
+{
+    override float4 GetColor()
+    {
+        return float4(1, 0, 0, 1);
+    }
+};
+```
+
+## Several parents: the order matters
+
+A shader can have several parents. SDSL puts all the classes of a shader in one list, in a fixed order: each parent with its own parents first, in the order they are written. Each class is in the list once, at its first place. These classes are often called **mixins**.
+
+For each method, the last override in the list wins, and `base` calls the one just before it.
 
 ```cs
 shader MixAB : ShaderA, ShaderB
 {
 };
- 
+
 shader MixBA : ShaderB, ShaderA
 {
 };
- 
+
 // Resulting code (representation)
 
-shader MixAB : BaseInterface, BaseShader, ShaderA, ShaderB
+// Order: BaseShader, ShaderA, ShaderB
+shader MixAB
 {
-	float Compute()
-	{
-		// code from BaseShader
-		float v0 = 1.0f;
- 
-		// code from ShaderA
-		float v1 = 2.0f;
- 
-		// code from ShaderB
-		float prevValue = v1;
-		float v2 = 5.0f + prevValue;
- 
-		return v2; // = 7.0f
-	}
+    float Compute()
+    {
+        // code from BaseShader
+        float v0 = 1.0;
+
+        // code from ShaderA
+        float v1 = 2.0;
+
+        // code from ShaderB
+        float previous = v1;
+        float v2 = 5.0 + previous;
+
+        return v2; // = 7.0
+    }
 };
 
-shader MixBA : BaseInterface, BaseShader, ShaderA, ShaderB
+// Order: BaseShader, ShaderB, ShaderA
+shader MixBA
 {
-	float Compute()
-	{
-		// code from BaseShader
-		float v0 = 1.0f;
+    float Compute()
+    {
+        // code from BaseShader
+        float v0 = 1.0;
 
-		// code from ShaderB
-		float prevValue = v0;
-		float v1 = 5.0f + prevValue;
-		
-		// code from ShaderA
-		float v2 = 2.0f;
+        // code from ShaderB
+        float previous = v0;
+        float v1 = 5.0 + previous;
 
-		return v2; // = 2.0f
-	}
+        // code from ShaderA
+        float v2 = 2.0;
+
+        return v2; // = 2.0
+    }
 };
 ```
 
-## Static calls
+`ShaderA` doesn't call `base`, so in `MixBA` it hides the result of `ShaderB`.
 
-You can also use a variable or call a method from a shader without having to inherit from it. To do this, use `<shader_name>.<variable or method_name>`. It behaves the same way as a static call. 
+The same order applies when an [effect](../effect-language.md) mixes several shaders: `mixin ShaderA; mixin ShaderB;` gives the order of `MixAB`.
 
-Note that if you statically call a method that uses shader class variables, the shader won't compile. This is a convenient way to only use a part of a shader, but this isn't an optimization. The shader compiler already automatically removes any unnecessary variables.
+## Keywords
 
-### Code example: static calls
+SDSL uses the keywords of HLSL, and adds these:
+
+- `shader`: declares a shader. See [Shaders and modules](shaders-and-modules.md).
+- `module`: declares a module, or marks a member or method of a shader as part of its companion module (once per effect). See [Shaders and modules](shaders-and-modules.md).
+- `import`: uses a module in a shader or module. See [Shaders and modules](shaders-and-modules.md).
+- `override`: a method that replaces an inherited method. Required.
+- `abstract`: a method declared without a body.
+- `base`: calls the method that an override replaces.
+- `compose`: a slot for another shader. See [Composition](composition.md).
+- `stream`: a member that is passed between shader stages. See [Streams and stage input/output](automatic-shader-stage-input-output.md).
+- `streams`: the object that holds the streams. See [Streams and stage input/output](automatic-shader-stage-input-output.md).
+- `Input`, `Output`, `Input2`, `Constants`: for geometry and tessellation shaders. See [Shader stages](shader-stages.md).
+
+> [!Note]
+> `stage` was the name of the `module` modifier before Stride 4.5. It is now an error.
+
+## Annotations
+
+Like in HLSL, members can have annotations. The most useful ones are:
+
+- `[Color]` on a `float3` or `float4` member: the parameter key has the type `Color3` or `Color4` instead of `Vector3` or `Vector4`, and Game Studio shows a color picker.
+- `[Link("...")]` sets the name of the parameter key used to set this value.
+- `[Map("...")]` uses an existing parameter key for this value. No new key is created.
 
 ```cs
-shader StaticClass
+shader MyAnnotatedShader
 {
-	float StaticValue;
-	float StaticMethod(float a)
-	{
-		return 2.0f * a;
-	}
- 
-	// this method uses a
-	float NonStaticMethod()
-	{
-		return 2.0f * StaticValue;
-	}
-};
- 
-// this shader class is fine
-shader CorrectStaticCallClass
-{
-	float Compute()
-	{
-		return StaticClass.StaticValue * StaticMethod(5.0f);
-	}
-};
- 
-// this shader class won't compile since the call is not static
-shader IncorrectStaticCallClass 
-{
-	float Compute()
-	{
-		return StaticClass.NonStaticMethod();
-	}
-};
- 
-// one way to fix this
-shader IncorrectStaticCallClassFixed : StaticClass
-{
-	float Compute()
-	{
-		return NonStaticMethod();
-	}
+    [Color] float4 MyColor;
+
+    [Link("ProjectKeys.MyTextureKey")]
+    Texture2D MyTexture;
+
+    [Map("Texturing.Texture0")]
+    Texture2D DefaultTexture;
 };
 ```
 
 ## See also
 
-* [Effect language](../effect-language.md)
-* [Shading language index](index.md)
-    - [Composition](composition.md)
-    - [Templates](templates.md)
-    - [Shader stage input/output automatic management](automatic-shader-stage-input-output.md)
-	- [Shader stages](shader-stages.md)
+* [Shaders and modules](shaders-and-modules.md)
+* [Composition](composition.md)
+* [Streams and stage input/output](automatic-shader-stage-input-output.md)
+* [Shader stages](shader-stages.md)
+* [Effects (SDFX)](../effect-language.md)

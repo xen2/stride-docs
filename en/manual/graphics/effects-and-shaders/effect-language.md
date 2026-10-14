@@ -1,4 +1,6 @@
-# Effect language
+# Effects (SDFX)
+
+An **effect** is the final shader used to draw: it puts together the [shaders and modules](shading-language/shaders-and-modules.md) written in SDSL. You build an effect in C#, or in an effect file (`.sdfx`).
 
 ## Create shaders in C&#35;
 
@@ -65,6 +67,10 @@ namespace StrideEffects
 ### Add a mixin
 
 To add a mixin, use `mixin <mixin_name>`.
+
+The order of the mixins matters when they override the same method: see [Inheritance and overrides](shading-language/shader-classes-mixins-and-inheritance.md).
+
+When the mixin is a [module](shading-language/shaders-and-modules.md) (such as `ShaderBase`), `mixin` imports it at the root of the effect: there is still one of it for the whole effect.
 
 ### Use parameters
 
@@ -133,4 +139,6 @@ You can use the `MyPartialEffect` mixin like any other mixin in the code.
 
 ## See also
 
-* [Shading language](shading-language/index.md)
+* [Shading language (SDSL)](shading-language/index.md)
+* [Shaders and modules](shading-language/shaders-and-modules.md)
+* [Composition](shading-language/composition.md)
