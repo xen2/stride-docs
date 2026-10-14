@@ -147,7 +147,7 @@ Writing a module in the parent list (`: Texturing`) still means import, so code 
 
 ### 4. `clone` is removed
 
-The `clone` method modifier has had no effect since Stride 4.4. The upgrade removes it; code that still has it gets the warning [SDSL0212](../diagnostics/SDSL0212.md).
+The `clone` method modifier has had no effect since Stride 4.4. The upgrade removes it; code that still has it gets the warning SDSL0212.
 
 ## What needs a person
 
@@ -159,7 +159,7 @@ The `clone` method modifier has had no effect since Stride 4.4. The upgrade remo
 
 ## Removed engine shaders
 
-Five engine shaders took the texture as a `Texture2D` generic parameter. Since Stride 4.4, no effect that used them could compile, so Stride 4.5 removes them, with their key classes (`ComputeColorTextureKeys`, ...). A shader that declares a texture or sampler generic parameter now gets the error [SDSL0118](../diagnostics/SDSL0118.md).
+Five engine shaders took the texture as a `Texture2D` generic parameter. Since Stride 4.4, no effect that used them could compile, so Stride 4.5 removes them, with their key classes (`ComputeColorTextureKeys`, ...). A shader that declares a texture or sampler generic parameter now gets the error SDSL0118.
 
 The engine materials didn't use these shaders: the **Texture** node of a material uses the `...Sampler` shaders below. If your code or your shaders used one of the removed shaders, use its replacement:
 
@@ -192,10 +192,19 @@ The new generic parameters:
 | ``` `A.F` is `module` but overrides the instance method `B.F`. ... Remove `module`, or mark `B.F` `module`. ``` | Remove `module` from the override, or mark `B.F` with `module`. |
 | ``` `base.F()` in `A.G`: `F` is a module method, called from instance code, and `A` is used in a composition. ...``` | Make `G` `module` (`override module` if it is an override). |
 | ``'S' is a `module compose` declared by 'X', so it is one slot for the whole effect and must be supplied at the root.`` | Fill the slot `S` at the root of the effect (in the `.sdfx` file or the C# mixin tree), not in a composition. |
-| `SDSL0118: X declares generic parameter 'T' of type Texture2D ...` | Declare the texture as a member, or use a `LinkType` generic parameter. See [SDSL0118](../diagnostics/SDSL0118.md) and [Removed engine shaders](#removed-engine-shaders). |
-| `SDSL0119: X can only be mixed at the root of an effect ...` | `X` is root-only (a post effect, for example) but is used in a composition. See [SDSL0119](../diagnostics/SDSL0119.md). |
+| `SDSL0118: X declares generic parameter 'T' of type Texture2D ...` | Declare the texture as a member, or use a `LinkType` generic parameter (see [Removed engine shaders](#removed-engine-shaders)). |
+| `SDSL0119: X can only be mixed at the root of an effect ...` | `X` is root-only (a post effect, for example) but an effect uses it in a composition: mix it at the root, or compose a shader that doesn't inherit or import a root-only class. |
 
-The messages about module code and overrides above are errors when an effect is built (in the asset build or at run time) and uses the shader in a composition. The same mistakes are reported earlier, as warnings [SDSL0204](../diagnostics/SDSL0204.md) to [SDSL0208](../diagnostics/SDSL0208.md), when the `.sdsl` file compiles, unless the shader is root-only.
+The messages about module code and overrides above are errors when an effect is built (in the asset build or at run time) and uses the shader in a composition. The same mistakes are reported earlier, as the warnings below, when the `.sdsl` file compiles, unless the shader is root-only. Each warning message also says the fix.
+
+| Warning | Fix |
+|---|---|
+| `SDSL0204`: module code reads an instance member | Mark the member `module`, or mark the shader `[Root]` if the effect mixes it only at its root. |
+| `SDSL0205`: module code calls an instance method | Mark the called method `module`, or mark the shader `[Root]` if the effect mixes it only at its root. |
+| `SDSL0206`: a plain `override` of a module method | Write `module override`, or mark the shader `[Root]` if the effect mixes it only at its root. |
+| `SDSL0207`: an `override module` of an instance method | Remove `module` from the override, or mark the shader `[Root]` if the effect mixes it only at its root. |
+| `SDSL0208`: instance code calls a module method through `base` | Make the calling method `module` (`module override` if it is an override), or mark the shader `[Root]`. |
+| `SDSL0212`: `clone` has no effect | Remove `clone` (the project upgrade does it). |
 
 ## Learn more
 
