@@ -125,9 +125,6 @@ shader MyLayer
 };
 ```
 
-> [!Note]
-> The `clone` keyword of older Stride versions is still accepted, but it has no effect.
-
 ## See also
 
 * [Shaders and modules](shaders-and-modules.md)

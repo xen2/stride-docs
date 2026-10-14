@@ -25,15 +25,26 @@ The `Stride.Core.CompilerServices` is linked to `Stride.Core`, the diagnostic An
 
 ## Shader compiler (SDSL)
 
-The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.sdsl`): in the asset build, in Game Studio and at run time. Codes from `SDSL0200` are warnings: the class still compiles, but it most likely doesn't do what you expect. To make them fail the build (they will be errors in a later release), set the MSBuild property `StrideShaderWarningsAsErrors` to `true` in your project.
+The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.sdsl`) or builds an effect: in the asset build, in Game Studio and at run time. Codes from `SDSL0200` are warnings: the class still compiles, but it most likely doesn't do what you expect. To make them fail the build (they will be errors in a later release), set the MSBuild property `StrideShaderWarningsAsErrors` to `true` in your project.
 
 - [SDSL0116](SDSL0116.md): `override` with a signature that no inherited method has
 - [SDSL0117](SDSL0117.md): too few generic values
 - [SDSL0118](SDSL0118.md): texture or sampler generic parameter
+- [SDSL0119](SDSL0119.md): root-only shader in a composition
 - [SDSL0200](SDSL0200.md): `override` with no inherited method
 - [SDSL0201](SDSL0201.md): `base` call with no inherited method
 - [SDSL0202](SDSL0202.md): too many generic values
 - [SDSL0203](SDSL0203.md): `[Color]` on a type that isn't a color
+- [SDSL0204](SDSL0204.md): module code reads an instance member
+- [SDSL0205](SDSL0205.md): module code calls an instance method
+- [SDSL0206](SDSL0206.md): plain `override` of a module method
+- [SDSL0207](SDSL0207.md): `override module` of an instance method
+- [SDSL0208](SDSL0208.md): `base` call to a module method from instance code
+- [SDSL0209](SDSL0209.md): state in a `[Pure]` module
+- [SDSL0210](SDSL0210.md): `[Pure]` module uses a module that isn't pure
+- [SDSL0211](SDSL0211.md): `[Pure]` on a shader
+- [SDSL0212](SDSL0212.md): `clone` has no effect
+- [SDSL0213](SDSL0213.md): pixel shader operation in a `[Pure]` module
 
 ## References
 
