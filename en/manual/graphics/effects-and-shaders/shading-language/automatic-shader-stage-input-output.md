@@ -209,6 +209,54 @@ In SDSL, adding a new attribute is as simple as adding it to the pool of streams
 
 ![media/sdsl_add_normal.png](media/sdsl_add_normal.png)
 
+## Partial structs
+
+A **partial struct** is a struct that other shaders and modules can add fields to, without editing the file that declares it. Like streams, it lets a plugin add data to engine code. Unlike streams, the data is passed explicitly: as parameters, return values and local variables. So the code that uses it runs in any stage, compute shaders included, and you see in a function's signature what it reads.
+
+The class that declares the struct writes `partial struct`. A class that adds fields writes `extend struct`, and must inherit or [import](shaders-and-modules.md) the class that declares it:
+
+```cs
+module SurfaceData
+{
+    partial struct SurfaceInput
+    {
+        float3 normalWS;
+        float2 uv;
+    };
+};
+
+module WetSurface
+{
+    import SurfaceData;
+
+    extend struct SurfaceInput
+    {
+        float wetness;
+    };
+
+    float3 Darken(float3 color, SurfaceInput surface)
+    {
+        return color * (1.0 - 0.5 * surface.wetness);
+    }
+};
+```
+
+A shader sees the fields of the parts it imports: a shader that imports only `SurfaceData` can't read `wetness`; one that imports `WetSurface` can. Values still keep every field when they pass through code that doesn't see it.
+
+In an effect, the struct has the fields of every part in the effect: first the fields of the declaring class, then the other parts sorted by class name, each in the order written. The same set of modules gives the same layout in every effect. A field name can be used only once across all the parts ([SDSL0120](../../../../diagnostics/SDSL0120.md)): if two plugins need the same value, move it into a module both import.
+
+A plain `struct` stays closed: only a struct declared `partial struct` can get more fields ([SDSL0122](../../../../diagnostics/SDSL0122.md)).
+
+### Limits
+
+The fields of a partial struct depend on the effect, so it can't be where a layout is shared with C#, with another stage or with another effect. In Stride 4.5, a partial struct (or a struct, or array, that contains one) can be used for:
+
+- local variables, parameters (`in`, `out`, `inout`) and return values,
+- `static` variables,
+- members of a plain struct, and arrays.
+
+It can't be a stream, a cbuffer member, a buffer element (`StructuredBuffer<T>` and the other buffer types), or a `groupshared` variable ([SDSL0125](../../../../diagnostics/SDSL0125.md)). Its fields can have scalar, vector, matrix or array types, not struct types ([SDSL0127](../../../../diagnostics/SDSL0127.md)), and the class that declares it can't have generic parameters ([SDSL0126](../../../../diagnostics/SDSL0126.md)).
+
 ## See also
 
 * [Effects (SDFX)](../effect-language.md)

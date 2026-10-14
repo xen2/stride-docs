@@ -31,6 +31,14 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0117](SDSL0117.md): too few generic values
 - [SDSL0118](SDSL0118.md): texture or sampler generic parameter
 - [SDSL0119](SDSL0119.md): root-only shader in a composition
+- [SDSL0120](SDSL0120.md): the same field in two parts of a partial struct
+- [SDSL0121](SDSL0121.md): `extend struct` with no partial struct to extend
+- [SDSL0122](SDSL0122.md): `extend struct` of a struct that is not partial
+- [SDSL0123](SDSL0123.md): a second declaration of a partial struct
+- [SDSL0124](SDSL0124.md): two partial structs with the same name
+- [SDSL0125](SDSL0125.md): partial struct in a stream, cbuffer, buffer or groupshared variable
+- [SDSL0126](SDSL0126.md): partial struct in a generic class
+- [SDSL0127](SDSL0127.md): partial struct field of a struct type
 - [SDSL0200](SDSL0200.md): `override` with no inherited method
 - [SDSL0201](SDSL0201.md): `base` call with no inherited method
 - [SDSL0202](SDSL0202.md): too many generic values
@@ -45,6 +53,8 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0211](SDSL0211.md): `[Pure]` on a shader
 - [SDSL0212](SDSL0212.md): `clone` has no effect
 - [SDSL0213](SDSL0213.md): pixel shader operation in a `[Pure]` module
+- [SDSL0214](SDSL0214.md): `partial` on a shader or module
+- [SDSL0215](SDSL0215.md): two structs with the same name
 
 ## References
 
