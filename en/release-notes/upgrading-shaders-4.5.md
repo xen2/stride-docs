@@ -145,11 +145,16 @@ Here `MyMath` (functions and constants only) became a module, so `MyMath.Pi` sti
 
 Writing a module in the parent list (`: Texturing`) still means import, so code that the upgrade didn't touch keeps working. Effects (`.sdfx`) and C# code that mix a module (`mixin ShaderBase`) also keep working. Parameter keys don't change.
 
+### 4. `clone` is removed
+
+The `clone` method modifier has had no effect since Stride 4.4. The upgrade removes it; code that still has it gets the warning [SDSL0212](../diagnostics/SDSL0212.md).
+
 ## What needs a person
 
 - **Warning `Shader upgrade: ...: module code X calls Y.Z, an instance method; this works only if the class of X is mixed at the root, not used in a composition`.** Module code calls a method of a composition type. If the class is mixed at the root of the effect (a post effect, for example), nothing to do. If it's used in a composition slot, the effect fails to build with the "calls ... an instance method" error below: compute the value in instance code, or pass it as a parameter.
 - **Warning `Shader upgrade: ...: class X not found in the text, not upgraded`.** The upgrade couldn't find the declaration of `X` in its file (for example, it's built by a macro). Upgrade it by hand.
 - **Shaders from other packages.** The upgrade rewrites the `.sdsl` files of your project only. Shaders that come from a NuGet package or another library need a version of that package made for Stride 4.5.
+- **Warnings SDSL0204 to SDSL0208 on a shader that an effect mixes only at its root.** The compiler checks the module rules for every shader that isn't root-only. A shader that inherits or imports `ShaderBase`, `ShadingBase`, `ImageEffectShader`, `ComputeShaderBase`, `SpriteBase` or `ParticleBase` directly is root-only. An effect feature that reaches them only through another module (for example through `TransformationBase`) isn't: if the effect mixes it only at its root, mark it `[Root]` (see "Shaders and modules" in the manual of Stride 4.5).
 - **Classes added to the parents.** When a class used by name becomes a parent, it may come earlier in the order than the hidden mixin did before. This matters only if it overrides a method that another parent overrides too: check that the result is the one you want (see [Inheritance and overrides](../manual/graphics/effects-and-shaders/shading-language/shader-classes-mixins-and-inheritance.md)).
 
 ## Removed engine shaders
@@ -185,10 +190,12 @@ The new generic parameters:
 | ``Module code `A.F` calls `G`, an instance method of `A`. ...`` | Mark `G` with `module`. |
 | ``` `A.F` overrides the module method `B.F` but is not `module`. ... Write `override module`. ``` | Write `module override` (or `override module`, the order of the keywords doesn't matter). |
 | ``` `A.F` is `module` but overrides the instance method `B.F`. ... Remove `module`, or mark `B.F` `module`. ``` | Remove `module` from the override, or mark `B.F` with `module`. |
+| ``` `base.F()` in `A.G`: `F` is a module method, called from instance code, and `A` is used in a composition. ...``` | Make `G` `module` (`override module` if it is an override). |
 | ``'S' is a `module compose` declared by 'X', so it is one slot for the whole effect and must be supplied at the root.`` | Fill the slot `S` at the root of the effect (in the `.sdfx` file or the C# mixin tree), not in a composition. |
 | `SDSL0118: X declares generic parameter 'T' of type Texture2D ...` | Declare the texture as a member, or use a `LinkType` generic parameter. See [SDSL0118](../diagnostics/SDSL0118.md) and [Removed engine shaders](#removed-engine-shaders). |
+| `SDSL0119: X can only be mixed at the root of an effect ...` | `X` is root-only (a post effect, for example) but is used in a composition. See [SDSL0119](../diagnostics/SDSL0119.md). |
 
-The messages about module code and overrides appear when an effect is built (in the asset build or at run time), not when the `.sdsl` file is compiled alone: they depend on whether the shader is used in a composition.
+The messages about module code and overrides above are errors when an effect is built (in the asset build or at run time) and uses the shader in a composition. The same mistakes are reported earlier, as warnings [SDSL0204](../diagnostics/SDSL0204.md) to [SDSL0208](../diagnostics/SDSL0208.md), when the `.sdsl` file compiles, unless the shader is root-only.
 
 ## Learn more
 
