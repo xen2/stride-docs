@@ -41,6 +41,8 @@ items:
     href: engine/localization.md
   - name: Hot reloading editor shaders
     href: engine/hot-reloading-shaders.md
+  - name: Shader compiler tests
+    href: engine/shader-compiler-tests.md
   - name: Source debugging
     href: engine/source-debugging.md
   - name: Visual Studio plugin
