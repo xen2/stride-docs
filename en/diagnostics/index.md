@@ -29,6 +29,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 
 - [SDSL0116](SDSL0116.md): `override` with a signature that no inherited method has
 - [SDSL0117](SDSL0117.md): too few generic values
+- [SDSL0118](SDSL0118.md): texture or sampler generic parameter
 - [SDSL0200](SDSL0200.md): `override` with no inherited method
 - [SDSL0201](SDSL0201.md): `base` call with no inherited method
 - [SDSL0202](SDSL0202.md): too many generic values

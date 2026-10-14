@@ -36,7 +36,7 @@ GenericShader<1.0f, TEXCOORD0, MyColorLink>
 ```
 
 > [!Note]
-> Some engine shaders declare `Texture2D` and `SamplerState` generic parameters, but the shader compiler can't instantiate them at the moment. To choose a texture or a sampler by name, use a `LinkType` parameter, like the engine's `DynamicTexture` and `DynamicSampler` modules (see the example below).
+> Texture and sampler generic parameters (`Texture2D`, `SamplerState`, ...) are not supported since Stride 4.4, and the compiler reports them with [SDSL0118](../../../../diagnostics/SDSL0118.md). To choose a texture or a sampler by name, use a `LinkType` parameter, like the engine's `DynamicTexture` and `DynamicSampler` modules (see the example below). Typed texture handles are planned for a later release.
 
 A shader can pass its generic parameters to its parents and to the modules it imports:
 
