@@ -152,6 +152,26 @@ Writing a module in the parent list (`: Texturing`) still means import, so code 
 - **Shaders from other packages.** The upgrade rewrites the `.sdsl` files of your project only. Shaders that come from a NuGet package or another library need a version of that package made for Stride 4.5.
 - **Classes added to the parents.** When a class used by name becomes a parent, it may come earlier in the order than the hidden mixin did before. This matters only if it overrides a method that another parent overrides too: check that the result is the one you want (see [Inheritance and overrides](../manual/graphics/effects-and-shaders/shading-language/shader-classes-mixins-and-inheritance.md)).
 
+## Removed engine shaders
+
+Five engine shaders took the texture as a `Texture2D` generic parameter. Since Stride 4.4, no effect that used them could compile, so Stride 4.5 removes them, with their key classes (`ComputeColorTextureKeys`, ...). A shader that declares a texture or sampler generic parameter now gets the error [SDSL0118](../diagnostics/SDSL0118.md).
+
+The engine materials didn't use these shaders: the **Texture** node of a material uses the `...Sampler` shaders below. If your code or your shaders used one of the removed shaders, use its replacement:
+
+| Removed shader | Replacement |
+|---|---|
+| `ComputeColorTexture<TTexture, TStream>` | `ComputeColorTextureSampler<TTextureName, TStream, TSampler, TRgba>` |
+| `ComputeColorTextureRepeat<TTexture, TStream, TFactor>` | `ComputeColorTextureScaledSampler<TTextureName, TStream, TSampler, TRgba, TScale>`, with `TScale = float2(TFactor, TFactor)` and a repeat sampler such as `Texturing.LinearRepeatSampler` |
+| `ComputeColorTextureScaled<TTexture, TStream, TScale>` | `ComputeColorTextureScaledSampler<TTextureName, TStream, TSampler, TRgba, TScale>` |
+| `ComputeColorTextureScaledOffset<TTexture, TStream, TScale, TOffset>` | `ComputeColorTextureScaledOffsetSampler<TTextureName, TStream, TSampler, TRgba, TScale, TOffset>` |
+| `ComputeColorTextureDynamicScaledOffset<TTexture, TStream>` | `ComputeColorTextureScaledOffsetDynamicSampler<TTextureName, TStream, TSampler, TRgba, TScale, TOffset>`: `TScale` and `TOffset` are the names of your `float2` scale and offset keys (before: `ComputeColorTextureDynamicScaledOffsetKeys.Scale` and `.Offset`) |
+
+The new generic parameters:
+
+- `TTextureName`: the name of the texture key, for example `Material.DiffuseMap`. The texture is set with this key.
+- `TSampler`: the name of the sampler key. The removed shaders used `Texturing.Sampler`.
+- `TRgba`: the channels to read, `rgba` for all of them.
+
 ## Error messages and their fix
 
 | Message | Fix |
@@ -166,6 +186,7 @@ Writing a module in the parent list (`: Texturing`) still means import, so code 
 | ``` `A.F` overrides the module method `B.F` but is not `module`. ... Write `override module`. ``` | Write `module override` (or `override module`, the order of the keywords doesn't matter). |
 | ``` `A.F` is `module` but overrides the instance method `B.F`. ... Remove `module`, or mark `B.F` `module`. ``` | Remove `module` from the override, or mark `B.F` with `module`. |
 | ``'S' is a `module compose` declared by 'X', so it is one slot for the whole effect and must be supplied at the root.`` | Fill the slot `S` at the root of the effect (in the `.sdfx` file or the C# mixin tree), not in a composition. |
+| `SDSL0118: X declares generic parameter 'T' of type Texture2D ...` | Declare the texture as a member, or use a `LinkType` generic parameter. See [SDSL0118](../diagnostics/SDSL0118.md) and [Removed engine shaders](#removed-engine-shaders). |
 
 The messages about module code and overrides appear when an effect is built (in the asset build or at run time), not when the `.sdsl` file is compiled alone: they depend on whether the shader is used in a composition.
 
