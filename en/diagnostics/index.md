@@ -27,6 +27,8 @@ The `Stride.Core.CompilerServices` is linked to `Stride.Core`, the diagnostic An
 
 The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.sdsl`) or builds an effect: in the asset build, in Game Studio and at run time. Codes from `SDSL0200` are warnings: the class still compiles, but it most likely doesn't do what you expect. To make them fail the build (they will be errors in a later release), set the MSBuild property `StrideShaderWarningsAsErrors` to `true` in your project.
 
+- [SDSL0046](SDSL0046.md): `mixin clone` in an effect
+- [SDSL0047](SDSL0047.md): `mixin remove` in an effect
 - [SDSL0116](SDSL0116.md): `override` with a signature that no inherited method has
 - [SDSL0117](SDSL0117.md): too few generic values
 - [SDSL0118](SDSL0118.md): texture or sampler generic parameter
