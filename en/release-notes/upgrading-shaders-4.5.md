@@ -149,6 +149,8 @@ Writing a module in the parent list (`: Texturing`) still means import, so code 
 
 The `clone` method modifier has had no effect since Stride 4.4. The upgrade removes it; code that still has it gets the warning SDSL0212.
 
+In effects (`.sdfx`), `mixin clone` (no effect since Stride 4.4 either) and `mixin remove` (which couldn't be parsed since Stride 4.4) are removed too: the build stops with SDSL0046 or SDSL0047. The upgrade doesn't change `.sdfx` files: delete `mixin clone` lines, and instead of `mixin remove X`, mix `X` in only where it's needed (under an `if`).
+
 ## What needs a person
 
 - **Warning `Shader upgrade: ...: module code X calls Y.Z, an instance method; this works only if the class of X is mixed at the root, not used in a composition`.** Module code calls a method of a composition type. If the class is mixed at the root of the effect (a post effect, for example), nothing to do. If it's used in a composition slot, the effect fails to build with the "calls ... an instance method" error below: compute the value in instance code, or pass it as a parameter.
@@ -182,6 +184,8 @@ The new generic parameters:
 | Message | Fix |
 |---|---|
 | ``SDSL0045: `stage` is now `module`: write `module` (the Stride project upgrade does it)`` | Replace `stage` by `module`. |
+| ``SDSL0046: `mixin clone` was removed: it has had no effect since Stride 4.4. Delete the line.`` | Delete the `mixin clone` line in the `.sdfx` file. |
+| ``SDSL0047: `mixin remove` was removed: ...`` | In the `.sdfx` file, mix the shader in only where it's needed (for example under an `if`) instead of removing it. |
 | `X is a shader, not a module: inherit it to use its members, or make it a module` | You use a member of the shader `X` by name (`X.Member`) without inheriting it. Add `X` to the parents, or declare `X` as `module X` if it has no instance part. |
 | ``X is a shader, not a module: inherit it (`: X`) instead of importing it`` | `import` takes a module. Move `X` to the parent list. |
 | `module X can't inherit the shader Y: a module only imports other modules` | Make `X` a shader, or make `Y` a module. |
