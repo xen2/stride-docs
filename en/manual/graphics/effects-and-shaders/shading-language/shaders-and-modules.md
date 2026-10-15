@@ -238,6 +238,49 @@ So its functions depend only on their parameters, and you can call them from any
 
 The engine's helper modules are pure: `Math`, `BlendUtils`, `BRDFMicrofacet`, `ColorUtility`, `HSVUtils`, `LuminanceUtils`, `NormalUtil`, `CubemapUtils` and others.
 
+## Push constants
+
+A `cbuffer` with the `[PushConstant]` attribute holds **push constants**: a few small values that C# sets just before a draw or a dispatch, without a descriptor set or a constant buffer to update. Typical uses are a draw index, an instance offset or a material index.
+
+```cs
+shader MyInstancedShading
+{
+    import ShaderBase;
+
+    [PushConstant] cbuffer PerDraw
+    {
+        module uint MaterialIndex;
+        module uint InstanceOffset;
+    };
+
+    ...
+};
+```
+
+In C#, set the values with `CommandList.SetPushConstants`, with a struct that has the same members in the same order:
+
+```cs
+[StructLayout(LayoutKind.Sequential)]
+struct PerDraw
+{
+    public uint MaterialIndex;
+    public uint InstanceOffset;
+}
+
+commandList.SetPushConstants(new PerDraw { MaterialIndex = 3, InstanceOffset = 120 });
+```
+
+All the `[PushConstant] cbuffer` declarations of an effect, whatever their names, form **one block**, in the order of the classes in the effect (an imported module comes before the class that imports it). The block is 32 bytes at most, on every graphics API: push constants on Vulkan, root constants on Direct3D 12, a constant buffer on Direct3D 11. Its layout is in `EffectReflection.PushConstants`.
+
+Rules:
+
+- A member is an `int`, `uint` or `float`, or a 2- or 4-component vector of them (for example `uint2` or `float4`). Other types are an error ([SDSL0129](../../../../diagnostics/SDSL0129.md)).
+- The block exists once per effect, so its members are `module` members, or the class is root-only ([SDSL0130](../../../../diagnostics/SDSL0130.md)).
+- The members are packed one after the other, with no padding: a 2-component vector must start at a multiple of 8 bytes, and a 4-component vector at a multiple of 16 bytes ([SDSL0134](../../../../diagnostics/SDSL0134.md)). Put the vectors first, or add a member before them. This way the C# struct has the same layout on every graphics API.
+- The block is 32 bytes at most ([SDSL0131](../../../../diagnostics/SDSL0131.md)).
+- A cbuffer name is `[PushConstant]` everywhere or nowhere ([SDSL0132](../../../../diagnostics/SDSL0132.md)).
+- On Direct3D 11, the block uses the last constant buffer register (`b13`), so the effect can have 13 other cbuffers at most ([SDSL0133](../../../../diagnostics/SDSL0133.md)).
+
 ## Shader, module, or module member?
 
 | You want to write | Use |
@@ -249,6 +292,7 @@ The engine's helper modules are pure: `Math`, `BlendUtils`, `BRDFMicrofacet`, `C
 | functions, constants or state that several shaders share | a `module`, used with `import` |
 | functions and constants only, usable from any shader | a `[Pure] module` |
 | an effect feature that an effect mixes only at its root | a `[Root] shader` (not needed if it imports `ImageEffectShader`, `ComputeShaderBase`...) |
+| a few small values that C# changes at each draw (a draw or material index) | a `[PushConstant] cbuffer` |
 
 ## Effects and C#
 

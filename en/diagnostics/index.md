@@ -39,6 +39,12 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0125](SDSL0125.md): partial struct in a stream, cbuffer, buffer or groupshared variable
 - [SDSL0126](SDSL0126.md): partial struct in a generic class
 - [SDSL0128](SDSL0128.md): a struct that contains itself
+- [SDSL0129](SDSL0129.md): push-constant member of an unsupported type
+- [SDSL0130](SDSL0130.md): push-constant cbuffer with instance members
+- [SDSL0131](SDSL0131.md): push constants larger than 32 bytes
+- [SDSL0132](SDSL0132.md): cbuffer name with and without `[PushConstant]`
+- [SDSL0133](SDSL0133.md): no constant buffer register left for push constants on Direct3D 11
+- [SDSL0134](SDSL0134.md): misaligned vector in the push constants
 - [SDSL0200](SDSL0200.md): `override` with no inherited method
 - [SDSL0201](SDSL0201.md): `base` call with no inherited method
 - [SDSL0202](SDSL0202.md): too many generic values
