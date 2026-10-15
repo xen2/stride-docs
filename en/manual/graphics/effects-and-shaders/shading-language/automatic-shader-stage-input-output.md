@@ -247,15 +247,54 @@ In an effect, the struct has the fields of every part in the effect: first the f
 
 A plain `struct` stays closed: only a struct declared `partial struct` can get more fields ([SDSL0122](../../../../diagnostics/SDSL0122.md)).
 
+### Struct fields
+
+A field of a partial struct can have a struct type: a plain struct, an array of structs, or another partial struct. Each class sees the fields it imports at every level:
+
+```cs
+module LightData
+{
+    struct LightSample
+    {
+        float3 color;
+        float intensity;
+    };
+
+    partial struct ShadingInput
+    {
+        float roughness;
+    };
+};
+
+module SurfaceLighting
+{
+    import SurfaceData;
+    import LightData;
+
+    extend struct SurfaceInput
+    {
+        LightSample lights[2];
+        ShadingInput shading;
+    };
+
+    float3 DirectLight(SurfaceInput surface)
+    {
+        return surface.lights[0].color * surface.lights[0].intensity * (1.0 - surface.shading.roughness);
+    }
+};
+```
+
+Here `SurfaceInput` (from `SurfaceData` above) gets an array of `LightSample` and a `ShadingInput`, which other modules can extend too. A struct can't contain itself, directly or through other structs and arrays ([SDSL0128](../../../../diagnostics/SDSL0128.md)).
+
 ### Limits
 
 The fields of a partial struct depend on the effect, so it can't be where a layout is shared with C#, with another stage or with another effect. In Stride 4.5, a partial struct (or a struct, or array, that contains one) can be used for:
 
 - local variables, parameters (`in`, `out`, `inout`) and return values,
 - `static` variables,
-- members of a plain struct, and arrays.
+- members of a plain struct, fields of another partial struct, and arrays.
 
-It can't be a stream, a cbuffer member, a buffer element (`StructuredBuffer<T>` and the other buffer types), or a `groupshared` variable ([SDSL0125](../../../../diagnostics/SDSL0125.md)). Its fields can have scalar, vector, matrix or array types, not struct types ([SDSL0127](../../../../diagnostics/SDSL0127.md)), and the class that declares it can't have generic parameters ([SDSL0126](../../../../diagnostics/SDSL0126.md)).
+It can't be a stream, a cbuffer member, a buffer element (`StructuredBuffer<T>` and the other buffer types), or a `groupshared` variable ([SDSL0125](../../../../diagnostics/SDSL0125.md)). The class that declares it can't have generic parameters ([SDSL0126](../../../../diagnostics/SDSL0126.md)).
 
 ## See also
 

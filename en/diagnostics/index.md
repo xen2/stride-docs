@@ -38,7 +38,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0124](SDSL0124.md): two partial structs with the same name
 - [SDSL0125](SDSL0125.md): partial struct in a stream, cbuffer, buffer or groupshared variable
 - [SDSL0126](SDSL0126.md): partial struct in a generic class
-- [SDSL0127](SDSL0127.md): partial struct field of a struct type
+- [SDSL0128](SDSL0128.md): a struct that contains itself
 - [SDSL0200](SDSL0200.md): `override` with no inherited method
 - [SDSL0201](SDSL0201.md): `base` call with no inherited method
 - [SDSL0202](SDSL0202.md): too many generic values
