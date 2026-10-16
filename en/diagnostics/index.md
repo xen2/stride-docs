@@ -65,6 +65,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0214](SDSL0214.md): `partial` on a shader or module
 - [SDSL0215](SDSL0215.md): two structs with the same name
 - [SDSL0216](SDSL0216.md): a shader loaded at run time, written for an older Stride version
+- [SDSL0219](SDSL0219.md): comma expression that drops values (a vector type is missing)
 
 ## References
 
