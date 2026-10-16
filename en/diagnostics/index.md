@@ -52,6 +52,8 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0133](SDSL0133.md): no constant buffer register left for push constants on Direct3D 11
 - [SDSL0134](SDSL0134.md): misaligned vector in the push constants
 - [SDSL0145](SDSL0145.md): a written swizzle that names an element twice
+- [SDSL0165](SDSL0165.md): a composition used as a value (call its `Compute()` method)
+- [SDSL0166](SDSL0166.md): a call to an abstract method that no shader of the effect overrides
 - [SDSL0200](SDSL0200.md): `override` with no inherited method
 - [SDSL0201](SDSL0201.md): `base` call with no inherited method
 - [SDSL0202](SDSL0202.md): too many generic values
@@ -71,6 +73,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0216](SDSL0216.md): a shader loaded at run time, written for an older Stride version
 - [SDSL0219](SDSL0219.md): comma expression that drops values (a vector type is missing)
 - [SDSL0220](SDSL0220.md): `register(...)` or `packoffset(...)` is ignored
+- [SDSL0236](SDSL0236.md): the value written after a composition is ignored
 
 ## References
 
