@@ -53,6 +53,9 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0134](SDSL0134.md): misaligned vector in the push constants
 - [SDSL0145](SDSL0145.md): a written swizzle that names an element twice
 - [SDSL0150](SDSL0150.md): a member of a buffer, such as `.Length` (buffers have `GetDimensions` instead)
+- [SDSL0155](SDSL0155.md): a matrix with one row or one column (`float1x3`, `float3x1`) is not supported yet
+- [SDSL0156](SDSL0156.md): an initializer list with the wrong number of values
+- [SDSL0157](SDSL0157.md): a texture, sampler or buffer in an initializer list
 - [SDSL0160](SDSL0160.md): a call with too many or too few arguments
 - [SDSL0161](SDSL0161.md): an argument that can't be converted to its parameter type
 - [SDSL0162](SDSL0162.md): no overload can take the arguments of a call
@@ -87,6 +90,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0216](SDSL0216.md): a shader loaded at run time, written for an older Stride version
 - [SDSL0219](SDSL0219.md): comma expression that drops values (a vector type is missing)
 - [SDSL0220](SDSL0220.md): `register(...)` or `packoffset(...)` is ignored
+- [SDSL0232](SDSL0232.md): a comparison without parentheses inside `&`, `|` or `^`
 - [SDSL0236](SDSL0236.md): the value written after a composition is ignored
 
 ## References
