@@ -29,6 +29,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 
 - [SDSL0046](SDSL0046.md): `mixin clone` in an effect
 - [SDSL0047](SDSL0047.md): `mixin remove` in an effect
+- [SDSL0114](SDSL0114.md): implementation of an abstract method without `override` (a warning)
 - [SDSL0116](SDSL0116.md): `override` with a signature that no inherited method has
 - [SDSL0117](SDSL0117.md): too few generic values
 - [SDSL0118](SDSL0118.md): texture or sampler generic parameter
