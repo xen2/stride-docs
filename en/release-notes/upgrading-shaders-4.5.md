@@ -151,12 +151,94 @@ The `clone` method modifier has had no effect since Stride 4.4. The upgrade remo
 
 In effects (`.sdfx`), `mixin clone` (no effect since Stride 4.4 either) and `mixin remove` (which couldn't be parsed since Stride 4.4) are removed too: the build stops with SDSL0046 or SDSL0047. The upgrade doesn't change `.sdfx` files: delete `mixin clone` lines, and instead of `mixin remove X`, mix `X` in only where it's needed (under an `if`).
 
+### 5. `override` is added to implementations of abstract methods
+
+Before Stride 4.4, a method could implement an abstract method of a parent without `override`. The upgrade adds `override` when the abstract method is declared by a shader of your project (same name and parameter types):
+
+```cs
+// Before
+shader MyInvert : MyFilterBase
+{
+    float4 Filter(float4 color) { return float4(1 - color.rgb, color.a); }
+};
+
+// After
+shader MyInvert : MyFilterBase
+{
+    override float4 Filter(float4 color) { return float4(1 - color.rgb, color.a); }
+};
+```
+
+For an abstract method of an engine shader, the compiler reports the warning SDSL0114 and compiles the method as an override: add `override` by hand.
+
+### 6. Shaders used in compositions import the streams of `ShaderBase` and `ComputeShaderBase`
+
+`ShaderBase` and `ComputeShaderBase` are root-only (`[Root]`) in 4.5: a shader that imports them can't be used in a composition (SDSL0119). A shader used in a composition that inherited one of them only to read its streams now imports the module that holds the streams: `ShaderBaseStream` or `ComputeShaderStreams`. This applies to a shader that inherits a composition type (such as `ComputeColor`) and overrides no entry point (`VSMain`, `PSMain`, ...):
+
+```cs
+// Before
+shader MyThreadColor : ComputeColor, ComputeShaderBase
+{
+    override float4 Compute() { return float4(streams.DispatchThreadId, 1); }
+};
+
+// After
+shader MyThreadColor : ComputeColor
+{
+    import ComputeShaderStreams;
+
+    override float4 Compute() { return float4(streams.DispatchThreadId, 1); }
+};
+```
+
+### 7. `base.` before a helper of a module parent is removed
+
+`base.X()` in instance code can't call a module method (SDSL0208). When `X` is a helper of a parent that becomes a module and nothing overrides `X`, `base.X()` meant the same as `X()`: the upgrade removes `base.`. If something overrides `X`, the upgrade logs a warning instead.
+
+### 8. `[Root]` on shaders that rely on being mixed at the root
+
+A module passes on only its own `[Root]`. When a class of your project becomes a module and was root-only through its parents (it inherited `ImageEffectShader`, for example), the shaders built on it are not root-only any more. A shader whose code relies on being mixed at the root (module code that reads its own members or calls its instance methods, or a plain `override` of a module method) gets `[Root]`, so it compiles without the warnings SDSL0204 to SDSL0206. Shaders used in compositions don't get it.
+
+```cs
+// Before
+shader MyFxBase : ImageEffectShader, Texturing
+{
+    stage float4 SampleInput(float2 uv) { return Texture0.Sample(LinearSampler, uv); }
+};
+
+shader MyTint : MyFxBase
+{
+    float4 Tint;
+    stage override float4 Shading() { return SampleInput(streams.TexCoord) * Tint; }
+};
+
+// After
+module MyFxBase
+{
+    import ImageEffectShader;
+    import Texturing;
+
+    float4 SampleInput(float2 uv) { return Texture0.Sample(LinearSampler, uv); }
+};
+
+[Root]
+shader MyTint
+{
+    import MyFxBase;
+
+    float4 Tint;
+    module override float4 Shading() { return SampleInput(streams.TexCoord) * Tint; }
+};
+```
+
 ## What needs a person
 
 - **Warning `Shader upgrade: ...: module code X calls Y.Z, an instance method; this works only if the class of X is mixed at the root, not used in a composition`.** Module code calls a method of a composition type. If the class is mixed at the root of the effect (a post effect, for example), nothing to do. If it's used in a composition slot, the effect fails to build with the "calls ... an instance method" error below: compute the value in instance code, or pass it as a parameter.
 - **Warning `Shader upgrade: ...: class X not found in the text, not upgraded`.** The upgrade couldn't find the declaration of `X` in its file (for example, it's built by a macro). Upgrade it by hand.
-- **Shaders from other packages.** The upgrade rewrites the `.sdsl` files of your project only. Shaders that come from a NuGet package or another library need a version of that package made for Stride 4.5.
-- **Warnings SDSL0204 to SDSL0208 on a shader that an effect mixes only at its root.** The compiler checks the module rules for every shader that isn't root-only. A shader that inherits or imports `ShaderBase`, `ShadingBase`, `ImageEffectShader`, `ComputeShaderBase`, `SpriteBase` or `ParticleBase` directly is root-only. An effect feature that reaches them only through another module (for example through `TransformationBase`) isn't: if the effect mixes it only at its root, mark it `[Root]` (see "Shaders and modules" in the manual of Stride 4.5).
+- **Shaders from other packages.** The upgrade rewrites the `.sdsl` files of your project only. Shaders that come from a NuGet package or another library need a version of that package made for Stride 4.5. Library authors can run the same upgrade on their own shader folders: `ShaderUpgrader.Upgrade(files, EngineShaderClasses.Current)` in `Stride.Shaders.Parsers` takes the files (path → text) and returns the upgraded files and the notes. Upgrade a library together with the libraries it builds on, so that it knows their classes.
+- **Shader code generated at run time.** Code that a tool or a library generates and registers at run time (for example with `ShaderSourceManager.AddShaderSource`) doesn't go through the project upgrade. The generator itself must write the 4.5 syntax: `module` instead of `stage`, `import` of the streams modules in shaders used in compositions (see 6 above), `override` on implementations.
+- **Warning `Shader upgrade: ...: X calls base.F() of the module M, and F is overridden: check the call by hand`.** `base.F()` in instance code can't call a module method (SDSL0208), and the upgrade can't remove `base.` because another class overrides `F`. Make the calling method `module`, or call `F()` if that is what you mean.
+- **Warnings SDSL0204 to SDSL0208 on a shader that an effect mixes only at its root.** The compiler checks the module rules for every shader that isn't root-only. A shader that inherits or imports `ShaderBase`, `ShadingBase`, `ImageEffectShader`, `ComputeShaderBase`, `SpriteBase` or `ParticleBase` directly is root-only. An effect feature that reaches them only through another module (for example through `TransformationBase`) isn't: if the effect mixes it only at its root, mark it `[Root]` (see "Shaders and modules" in the manual of Stride 4.5). The upgrade adds `[Root]` itself when the shader's own code shows that it relies on the root (see 8 above); these warnings remain for the other cases.
 - **Classes added to the parents.** When a class used by name becomes a parent, it may come earlier in the order than the hidden mixin did before. This matters only if it overrides a method that another parent overrides too: check that the result is the one you want (see [Inheritance and overrides](../manual/graphics/effects-and-shaders/shading-language/shader-classes-mixins-and-inheritance.md)).
 
 ## Removed engine shaders
@@ -197,7 +279,7 @@ The new generic parameters:
 | ``` `base.F()` in `A.G`: `F` is a module method, called from instance code, and `A` is used in a composition. ...``` | Make `G` `module` (`override module` if it is an override). |
 | ``'S' is a `module compose` declared by 'X', so it is one slot for the whole effect and must be supplied at the root.`` | Fill the slot `S` at the root of the effect (in the `.sdfx` file or the C# mixin tree), not in a composition. |
 | `SDSL0118: X declares generic parameter 'T' of type Texture2D ...` | Declare the texture as a member, or use a `LinkType` generic parameter (see [Removed engine shaders](#removed-engine-shaders)). |
-| `SDSL0119: X can only be mixed at the root of an effect ...` | `X` is root-only (a post effect, for example) but an effect uses it in a composition: mix it at the root, or compose a shader that doesn't inherit or import a root-only class. |
+| `SDSL0119: X can only be mixed at the root of an effect ...` | `X` is root-only (a post effect, for example) but an effect uses it in a composition: mix it at the root, or compose a shader that doesn't inherit or import a root-only class. If `X` only reads the streams of `ShaderBase` or `ComputeShaderBase`, import `ShaderBaseStream` or `ComputeShaderStreams` instead. |
 
 The messages about module code and overrides above are errors when an effect is built (in the asset build or at run time) and uses the shader in a composition. The same mistakes are reported earlier, as the warnings below, when the `.sdsl` file compiles, unless the shader is root-only. Each warning message also says the fix.
 
@@ -209,6 +291,7 @@ The messages about module code and overrides above are errors when an effect is 
 | `SDSL0207`: an `override module` of an instance method | Remove `module` from the override, or mark the shader `[Root]` if the effect mixes it only at its root. |
 | `SDSL0208`: instance code calls a module method through `base` | Make the calling method `module` (`module override` if it is an override), or mark the shader `[Root]`. |
 | `SDSL0212`: `clone` has no effect | Remove `clone` (the project upgrade does it). |
+| `SDSL0114`: an implementation of an abstract method without `override` | Add `override` (the project upgrade does it for abstract methods of your project). |
 
 ## Learn more
 
