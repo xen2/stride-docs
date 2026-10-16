@@ -52,6 +52,11 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0133](SDSL0133.md): no constant buffer register left for push constants on Direct3D 11
 - [SDSL0134](SDSL0134.md): misaligned vector in the push constants
 - [SDSL0145](SDSL0145.md): a written swizzle that names an element twice
+- [SDSL0160](SDSL0160.md): a call with too many or too few arguments
+- [SDSL0161](SDSL0161.md): an argument that can't be converted to its parameter type
+- [SDSL0162](SDSL0162.md): no overload can take the arguments of a call
+- [SDSL0163](SDSL0163.md): an ambiguous call: several overloads match equally well
+- [SDSL0164](SDSL0164.md): a value given for an `out` or `inout` parameter
 - [SDSL0165](SDSL0165.md): a composition used as a value (call its `Compute()` method)
 - [SDSL0166](SDSL0166.md): a call to an abstract method that no shader of the effect overrides
 - [SDSL0170](SDSL0170.md): `[StreamOutput]` on a geometry shader (stream output) is not supported
