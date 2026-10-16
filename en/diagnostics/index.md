@@ -31,6 +31,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0047](SDSL0047.md): `mixin remove` in an effect
 - [SDSL0048](SDSL0048.md): a reserved word used as a name (`triangle`, `point`, `texture`...)
 - [SDSL0049](SDSL0049.md): code after the end of a shader
+- [SDSL0050](SDSL0050.md): `compose` or `stream` inside a `cbuffer` or `rgroup`
 - [SDSL0114](SDSL0114.md): implementation of an abstract method without `override` (an error in Stride 4.4, a warning since Stride 4.5)
 - [SDSL0116](SDSL0116.md): `override` with a signature that no inherited method has
 - [SDSL0117](SDSL0117.md): too few generic values
