@@ -132,6 +132,30 @@ commandList.Dispatch(arguments, 0);
 > [!Note]
 > After a shader writes the argument buffer, transition it to `BarrierLayout.IndirectArgument` before the indirect call. The command list doesn't do it for you.
 
+## Dispatches that read what an earlier dispatch wrote
+
+When a dispatch reads or writes a buffer or texture that an earlier dispatch wrote as unordered access, call @'Stride.Graphics.CommandList.UnorderedAccessBarrier(Stride.Graphics.GraphicsResource)' between them. The resource stays in `BarrierLayout.UnorderedAccess`, so a transition can't order the two calls, and without the barrier the second dispatch can read old values.
+
+**Code:** Count, then use the counts
+
+```cs
+// The first pass writes the counts
+countEffect.Parameters.Set(MyCountShaderKeys.Counts, counts);
+countEffect.Draw(renderDrawContext);
+
+// Make the writes visible to the next pass
+commandList.UnorderedAccessBarrier(counts);
+
+// The second pass reads them
+scatterEffect.Parameters.Set(MyScatterShaderKeys.Counts, counts);
+scatterEffect.Draw(renderDrawContext);
+```
+
+When a pass writes several resources, @'Stride.Graphics.CommandList.UnorderedAccessBarrier' without an argument covers all of them; they must already be in `BarrierLayout.UnorderedAccess`. On Direct3D 11, both calls do nothing: the runtime orders the dispatches.
+
+> [!Note]
+> `ClearReadWrite` needs no barrier: it is ordered with the shader accesses before and after it.
+
 ## Read vertex and index buffers in shaders
 
 A vertex or index buffer created with `BufferFlags.ShaderResource | BufferFlags.RawBuffer` can also be read by shaders as a `ByteAddressBuffer`, for example to fetch vertices in a compute shader. Its size must be a multiple of 4 bytes.
