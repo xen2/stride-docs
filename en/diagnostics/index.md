@@ -25,11 +25,11 @@ The `Stride.Core.CompilerServices` is linked to `Stride.Core`, the diagnostic An
 
 ## Shader compiler (SDSL)
 
-The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.sdsl`) or builds an effect: in the asset build, in Game Studio and at run time. Codes from `SDSL0200` are warnings: the class still compiles, but it most likely doesn't do what you expect. To make them fail the build (they will be errors in a later release), set the MSBuild property `StrideShaderWarningsAsErrors` to `true` in your project.
+The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.sdsl`) or builds an effect: in the asset build, in Game Studio and at run time. Codes from `SDSL0200` are warnings, and so is SDSL0114 since Stride 4.5: the class still compiles, but it most likely doesn't do what you expect. To make them fail the build (they will be errors in a later release), set the MSBuild property `StrideShaderWarningsAsErrors` to `true` in your project.
 
 - [SDSL0046](SDSL0046.md): `mixin clone` in an effect
 - [SDSL0047](SDSL0047.md): `mixin remove` in an effect
-- [SDSL0114](SDSL0114.md): implementation of an abstract method without `override` (a warning)
+- [SDSL0114](SDSL0114.md): implementation of an abstract method without `override` (an error in Stride 4.4, a warning since Stride 4.5)
 - [SDSL0116](SDSL0116.md): `override` with a signature that no inherited method has
 - [SDSL0117](SDSL0117.md): too few generic values
 - [SDSL0118](SDSL0118.md): texture or sampler generic parameter
@@ -64,6 +64,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0213](SDSL0213.md): pixel shader operation in a `[Pure]` module
 - [SDSL0214](SDSL0214.md): `partial` on a shader or module
 - [SDSL0215](SDSL0215.md): two structs with the same name
+- [SDSL0216](SDSL0216.md): a shader loaded at run time, written for an older Stride version
 
 ## References
 
