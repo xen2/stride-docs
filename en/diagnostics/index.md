@@ -52,6 +52,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0133](SDSL0133.md): no constant buffer register left for push constants on Direct3D 11
 - [SDSL0134](SDSL0134.md): misaligned vector in the push constants
 - [SDSL0145](SDSL0145.md): a written swizzle that names an element twice
+- [SDSL0150](SDSL0150.md): a member of a buffer, such as `.Length` (buffers have `GetDimensions` instead)
 - [SDSL0160](SDSL0160.md): a call with too many or too few arguments
 - [SDSL0161](SDSL0161.md): an argument that can't be converted to its parameter type
 - [SDSL0162](SDSL0162.md): no overload can take the arguments of a call
