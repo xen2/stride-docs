@@ -71,6 +71,8 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0175](SDSL0175.md): an override with another return type than the inherited method
 - [SDSL0176](SDSL0176.md): an override with other parameters than the inherited method
 - [SDSL0177](SDSL0177.md): not all code paths of a method return a value
+- [SDSL0180](SDSL0180.md): an `AppendStructuredBuffer` or `ConsumeStructuredBuffer` method parameter
+- [SDSL0181](SDSL0181.md): an `out` or `inout` buffer parameter
 - [SDSL0200](SDSL0200.md): `override` with no inherited method
 - [SDSL0201](SDSL0201.md): `base` call with no inherited method
 - [SDSL0202](SDSL0202.md): too many generic values
