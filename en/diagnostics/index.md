@@ -54,6 +54,14 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0145](SDSL0145.md): a written swizzle that names an element twice
 - [SDSL0165](SDSL0165.md): a composition used as a value (call its `Compute()` method)
 - [SDSL0166](SDSL0166.md): a call to an abstract method that no shader of the effect overrides
+- [SDSL0170](SDSL0170.md): `[StreamOutput]` on a geometry shader (stream output) is not supported
+- [SDSL0171](SDSL0171.md): a method attribute that the compiler doesn't support
+- [SDSL0172](SDSL0172.md): a stream with an initial value
+- [SDSL0173](SDSL0173.md): a member whose initial value is not a constant
+- [SDSL0174](SDSL0174.md): a cbuffer with both stage and non-stage members
+- [SDSL0175](SDSL0175.md): an override with another return type than the inherited method
+- [SDSL0176](SDSL0176.md): an override with other parameters than the inherited method
+- [SDSL0177](SDSL0177.md): not all code paths of a method return a value
 - [SDSL0200](SDSL0200.md): `override` with no inherited method
 - [SDSL0201](SDSL0201.md): `base` call with no inherited method
 - [SDSL0202](SDSL0202.md): too many generic values
