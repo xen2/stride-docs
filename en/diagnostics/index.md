@@ -29,6 +29,8 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 
 - [SDSL0046](SDSL0046.md): `mixin clone` in an effect
 - [SDSL0047](SDSL0047.md): `mixin remove` in an effect
+- [SDSL0048](SDSL0048.md): a reserved word used as a name (`triangle`, `point`, `texture`...)
+- [SDSL0049](SDSL0049.md): code after the end of a shader
 - [SDSL0114](SDSL0114.md): implementation of an abstract method without `override` (an error in Stride 4.4, a warning since Stride 4.5)
 - [SDSL0116](SDSL0116.md): `override` with a signature that no inherited method has
 - [SDSL0117](SDSL0117.md): too few generic values
@@ -48,6 +50,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0132](SDSL0132.md): cbuffer name with and without `[PushConstant]`
 - [SDSL0133](SDSL0133.md): no constant buffer register left for push constants on Direct3D 11
 - [SDSL0134](SDSL0134.md): misaligned vector in the push constants
+- [SDSL0145](SDSL0145.md): a written swizzle that names an element twice
 - [SDSL0200](SDSL0200.md): `override` with no inherited method
 - [SDSL0201](SDSL0201.md): `base` call with no inherited method
 - [SDSL0202](SDSL0202.md): too many generic values
@@ -66,6 +69,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0215](SDSL0215.md): two structs with the same name
 - [SDSL0216](SDSL0216.md): a shader loaded at run time, written for an older Stride version
 - [SDSL0219](SDSL0219.md): comma expression that drops values (a vector type is missing)
+- [SDSL0220](SDSL0220.md): `register(...)` or `packoffset(...)` is ignored
 
 ## References
 
