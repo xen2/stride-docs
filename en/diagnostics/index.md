@@ -77,6 +77,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0186](SDSL0186.md): an `Interlocked*` destination that other threads don't see
 - [SDSL0187](SDSL0187.md): an atomic operation on a `float`
 - [SDSL0188](SDSL0188.md): a 64-bit atomic operation
+- [SDSL0189](SDSL0189.md): a texture offset that is not a constant
 - [SDSL0200](SDSL0200.md): `override` with no inherited method
 - [SDSL0201](SDSL0201.md): `base` call with no inherited method
 - [SDSL0202](SDSL0202.md): too many generic values
