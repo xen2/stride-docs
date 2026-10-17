@@ -73,6 +73,10 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0177](SDSL0177.md): not all code paths of a method return a value
 - [SDSL0180](SDSL0180.md): an `AppendStructuredBuffer` or `ConsumeStructuredBuffer` method parameter
 - [SDSL0181](SDSL0181.md): an `out` or `inout` buffer parameter
+- [SDSL0185](SDSL0185.md): an `Interlocked*` destination that is not an `int` or `uint`
+- [SDSL0186](SDSL0186.md): an `Interlocked*` destination that other threads don't see
+- [SDSL0187](SDSL0187.md): an atomic operation on a `float`
+- [SDSL0188](SDSL0188.md): a 64-bit atomic operation
 - [SDSL0200](SDSL0200.md): `override` with no inherited method
 - [SDSL0201](SDSL0201.md): `base` call with no inherited method
 - [SDSL0202](SDSL0202.md): too many generic values
