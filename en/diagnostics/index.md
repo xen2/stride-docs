@@ -32,6 +32,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0048](SDSL0048.md): a reserved word used as a name (`triangle`, `point`, `texture`...)
 - [SDSL0049](SDSL0049.md): code after the end of a shader
 - [SDSL0050](SDSL0050.md): `compose` or `stream` inside a `cbuffer` or `rgroup`
+- [SDSL0103](SDSL0103.md): an assignment to a value (`+x = 1`), not to a variable
 - [SDSL0114](SDSL0114.md): implementation of an abstract method without `override` (an error in Stride 4.4, a warning since Stride 4.5)
 - [SDSL0116](SDSL0116.md): `override` with a signature that no inherited method has
 - [SDSL0117](SDSL0117.md): too few generic values
@@ -78,6 +79,11 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0187](SDSL0187.md): an atomic operation on a `float`
 - [SDSL0188](SDSL0188.md): a 64-bit atomic operation
 - [SDSL0189](SDSL0189.md): a texture offset that is not a constant
+- [SDSL0190](SDSL0190.md): an unknown type name (`Sampler` instead of `SamplerState`)
+- [SDSL0191](SDSL0191.md): a parent shader that can't be found
+- [SDSL0192](SDSL0192.md): `this.X` on a stage member, or `base.X` on a variable
+- [SDSL0193](SDSL0193.md): a vector converted to a larger one (`float3` to `float4`)
+- [SDSL0194](SDSL0194.md): a stream read before any stage writes it, with no semantic
 - [SDSL0200](SDSL0200.md): `override` with no inherited method
 - [SDSL0201](SDSL0201.md): `base` call with no inherited method
 - [SDSL0202](SDSL0202.md): too many generic values
@@ -99,6 +105,9 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0220](SDSL0220.md): `register(...)` or `packoffset(...)` is ignored
 - [SDSL0232](SDSL0232.md): a comparison without parentheses inside `&`, `|` or `^`
 - [SDSL0236](SDSL0236.md): the value written after a composition is ignored
+- [SDSL0242](SDSL0242.md): `&` without parentheses inside `|`
+- [SDSL0243](SDSL0243.md): `&&` without parentheses inside `||`
+- [SDSL0244](SDSL0244.md): `+` or `-` without parentheses inside `<<` or `>>`
 
 ## References
 
