@@ -79,6 +79,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0187](SDSL0187.md): an atomic operation on a `float`
 - [SDSL0188](SDSL0188.md): a 64-bit atomic operation
 - [SDSL0189](SDSL0189.md): a texture offset that is not a constant
+- [SDSL0195](SDSL0195.md): an int, uint or bool matrix in a cbuffer or a buffer
 - [SDSL0190](SDSL0190.md): an unknown type name (`Sampler` instead of `SamplerState`)
 - [SDSL0191](SDSL0191.md): a parent shader that can't be found
 - [SDSL0192](SDSL0192.md): `this.X` on a stage member, or `base.X` on a variable
