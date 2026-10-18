@@ -67,7 +67,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0171](SDSL0171.md): a method attribute that the compiler doesn't support
 - [SDSL0172](SDSL0172.md): a stream with an initial value
 - [SDSL0173](SDSL0173.md): a member whose initial value is not a constant
-- [SDSL0174](SDSL0174.md): a cbuffer with both stage and non-stage members
+- [SDSL0174](SDSL0174.md): a cbuffer with both module and instance members
 - [SDSL0175](SDSL0175.md): an override with another return type than the inherited method
 - [SDSL0176](SDSL0176.md): an override with other parameters than the inherited method
 - [SDSL0177](SDSL0177.md): not all code paths of a method return a value
@@ -81,9 +81,10 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0195](SDSL0195.md): an int, uint or bool matrix in a cbuffer or a buffer
 - [SDSL0190](SDSL0190.md): an unknown type name (`Sampler` instead of `SamplerState`)
 - [SDSL0191](SDSL0191.md): a parent shader that can't be found
-- [SDSL0192](SDSL0192.md): `this.X` on a stage member, or `base.X` on a variable
+- [SDSL0192](SDSL0192.md): `this.X` on a module member, or `base.X` on a variable
 - [SDSL0193](SDSL0193.md): a vector converted to a larger one (`float3` to `float4`)
 - [SDSL0194](SDSL0194.md): a stream read before any stage writes it, with no semantic
+- [SDSL0196](SDSL0196.md): an imported module that can't be found
 - [SDSL0200](SDSL0200.md): `override` with no inherited method
 - [SDSL0201](SDSL0201.md): `base` call with no inherited method
 - [SDSL0202](SDSL0202.md): too many generic values
