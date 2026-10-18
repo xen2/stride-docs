@@ -34,7 +34,6 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0050](SDSL0050.md): `compose` or `stream` inside a `cbuffer` or `rgroup`
 - [SDSL0103](SDSL0103.md): an assignment to a value (`+x = 1`), not to a variable
 - [SDSL0114](SDSL0114.md): implementation of an abstract method without `override` (an error in Stride 4.4, a warning since Stride 4.5)
-- [SDSL0116](SDSL0116.md): `override` with a signature that no inherited method has
 - [SDSL0117](SDSL0117.md): too few generic values
 - [SDSL0118](SDSL0118.md): texture or sampler generic parameter
 - [SDSL0119](SDSL0119.md): root-only shader in a composition
