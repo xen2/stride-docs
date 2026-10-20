@@ -153,7 +153,7 @@ In effects (`.sdfx`), `mixin clone` (no effect since Stride 4.4 either) and `mix
 
 ### 5. `override` is added to implementations of abstract methods
 
-Before Stride 4.4, a method could implement an abstract method of a parent without `override`. The upgrade adds `override` when the abstract method is declared by a shader of your project (same name and parameter types):
+Before Stride 4.4, a method could implement an abstract method of a parent without `override`; since Stride 4.5 it is the error SDSL0114. The upgrade adds `override` when the method has the name and parameter types of an abstract method of a parent: a shader of your project, of a library given to the upgrade, or of the engine.
 
 ```cs
 // Before
@@ -169,7 +169,6 @@ shader MyInvert : MyFilterBase
 };
 ```
 
-For an abstract method of an engine shader, the compiler reports the warning SDSL0114 and compiles the method as an override: add `override` by hand.
 
 ### 6. Shaders used in compositions import the streams of `ShaderBase` and `ComputeShaderBase`
 
@@ -231,15 +230,76 @@ shader MyTint
 };
 ```
 
+### 9. `compose` and `stream` move out of `cbuffer` and `rgroup` blocks
+
+A composition or a stream isn't a member of a `cbuffer` or an `rgroup` (SDSL0050). Stride 4.3 compiled one declared inside such a block as declared after it, and Stride 4.4 stopped with an error. The upgrade moves it right after the block, so the shader works as in Stride 4.3:
+
+```cs
+// Before
+shader MyShrink : ComputeColor
+{
+    rgroup PerMaterial
+    {
+        stage Texture2D ShrinkTexture;
+        stage compose ComputeColor ShrinkStrength;
+    }
+    ...
+};
+
+// After
+shader MyShrink : ComputeColor
+{
+    rgroup PerMaterial
+    {
+        module Texture2D ShrinkTexture;
+    }
+    module compose ComputeColor ShrinkStrength;
+    ...
+};
+```
+
+### 10. The value of a composition is removed
+
+A composition gets its shader from the effect. A value written after its name (`compose ComputeColor Tint = float4(1, 1, 1, 1);`) was never used, and since Stride 4.5 the compiler reports the warning SDSL0236 for it. The upgrade removes `= value` and keeps the rest of the line, attributes such as `[Default(...)]` included.
+
 ## What needs a person
 
 - **Warning `Shader upgrade: ...: module code X calls Y.Z, an instance method; this works only if the class of X is mixed at the root, not used in a composition`.** Module code calls a method of a composition type. If the class is mixed at the root of the effect (a post effect, for example), nothing to do. If it's used in a composition slot, the effect fails to build with the "calls ... an instance method" error below: compute the value in instance code, or pass it as a parameter.
 - **Warning `Shader upgrade: ...: class X not found in the text, not upgraded`.** The upgrade couldn't find the declaration of `X` in its file (for example, it's built by a macro). Upgrade it by hand.
-- **Shaders from other packages.** The upgrade rewrites the `.sdsl` files of your project only. Shaders that come from a NuGet package or another library need a version of that package made for Stride 4.5. Library authors can run the same upgrade on their own shader folders: `ShaderUpgrader.Upgrade(files, EngineShaderClasses.Current)` in `Stride.Shaders.Parsers` takes the files (path → text) and returns the upgraded files and the notes. Upgrade a library together with the libraries it builds on, so that it knows their classes.
-- **Warning SDSL0216: shaders loaded at run time.** `.sdsl` files that a tool reads from the disk at run time (vvvv's shader folders, for example) and code registered with `ShaderSourceManager.AddShaderSource` don't go through the project upgrade. Stride 4.5 upgrades each of them in memory when it loads it, with the same steps, and reports [SDSL0216](../diagnostics/SDSL0216.md) once for it. This upgrade knows only that source, the classes it inherits or uses by name, and the engine, so no class becomes a module. Update the source to remove the warning: `ShaderUpgrader.UpgradeSource(path, text)` gives the new text, and a generator should write the 4.5 syntax itself: `module` instead of `stage`, `import` of the streams modules in shaders used in compositions (see 6 above), `override` on implementations.
+- **Shaders from other packages.** The upgrade rewrites the `.sdsl` files of your project only. Shaders that come from a NuGet package or another library need a version of that package made for Stride 4.5. Library authors can run the same upgrade on their own shaders: see [Upgrading shaders outside a Stride project](#upgrading-shaders-outside-a-stride-project).
+- **Shaders loaded at run time.** `.sdsl` files that a tool reads from the disk at run time (vvvv's shader folders, for example) and code registered with `ShaderSourceManager.AddShaderSource` don't go through the project upgrade: the compiler reports the errors and warnings above for their old syntax. Upgrade the files with the same API (see below), and make a generator write the 4.5 syntax itself: `module` instead of `stage`, `import` of the streams modules in shaders used in compositions (see 6 above), `override` on implementations.
 - **Warning `Shader upgrade: ...: X calls base.F() of the module M, and F is overridden: check the call by hand`.** `base.F()` in instance code can't call a module method (SDSL0208), and the upgrade can't remove `base.` because another class overrides `F`. Make the calling method `module`, or call `F()` if that is what you mean.
 - **Warnings SDSL0204 to SDSL0208 on a shader that an effect mixes only at its root.** The compiler checks the module rules for every shader that isn't root-only. A shader that inherits or imports `ShaderBase`, `ShadingBase`, `ImageEffectShader`, `ComputeShaderBase`, `SpriteBase` or `ParticleBase` directly is root-only. An effect feature that reaches them only through another module (for example through `TransformationBase`) isn't: if the effect mixes it only at its root, mark it `[Root]` (see "Shaders and modules" in the manual of Stride 4.5). The upgrade adds `[Root]` itself when the shader's own code shows that it relies on the root (see 8 above); these warnings remain for the other cases.
 - **Classes added to the parents.** When a class used by name becomes a parent, it may come earlier in the order than the hidden mixin did before. This matters only if it overrides a method that another parent overrides too: check that the result is the one you want (see [Inheritance and overrides](../manual/graphics/effects-and-shaders/shading-language/shader-classes-mixins-and-inheritance.md)).
+
+## Upgrading shaders outside a Stride project
+
+The steps of the project upgrade are a public API in `Stride.Shaders.Parsers`, for shader libraries and tools that keep their `.sdsl` files outside a Stride project:
+
+```cs
+using Stride.Shaders.Parsing.Upgrade;
+
+// path → text: the shaders to upgrade (one library)
+var files = Directory.GetFiles("Shaders", "*.sdsl", SearchOption.AllDirectories)
+    .ToDictionary(path => path, File.ReadAllText);
+// path → text: the shaders of the libraries it builds on, already made for Stride 4.5
+var dependencies = Directory.GetFiles("OtherLibrary/Shaders", "*.sdsl", SearchOption.AllDirectories)
+    .ToDictionary(path => path, File.ReadAllText);
+
+var result = ShaderUpgrader.Upgrade(files, EngineShaderClasses.Current, dependencies: dependencies);
+foreach (var (path, text) in result.Files)
+{
+    if (text != files[path])
+        File.WriteAllText(path, text);
+}
+foreach (var note in result.Notes)
+    Console.WriteLine(note);
+```
+
+- `files` is upgraded as one project: a class becomes a module only when the files show how it's used, so give the whole library at once.
+- `dependencies` are read to know their classes (parents, modules, abstract methods) and are never changed. Upgrade a library after the libraries it builds on: a dependency still written for an older version gets the note `dependency written for an older Stride version ...; upgrade it first`.
+- `EngineShaderClasses.Current` describes the engine shaders of the Stride version that runs the upgrade.
+- `Notes` has the same warnings as the project upgrade (see [What needs a person](#what-needs-a-person)). Running the upgrade on its result changes nothing.
 
 ## Removed engine shaders
 
@@ -266,6 +326,8 @@ The new generic parameters:
 | Message | Fix |
 |---|---|
 | ``SDSL0045: `stage` is now `module`: write `module` (the Stride project upgrade does it)`` | Replace `stage` by `module`. |
+| `SDSL0050: X is declared inside cbuffer B, but it is not a member of a cbuffer` | Move the `compose` or `stream` line out of the block (the project upgrade does it). |
+| `SDSL0114: X.F() implements abstract method Y.F but is not marked 'override'` | Add `override` (the project upgrade does it). |
 | ``SDSL0046: `mixin clone` was removed: it has had no effect since Stride 4.4. Delete the line.`` | Delete the `mixin clone` line in the `.sdfx` file. |
 | ``SDSL0047: `mixin remove` was removed: ...`` | In the `.sdfx` file, mix the shader in only where it's needed (for example under an `if`) instead of removing it. |
 | `X is a shader, not a module: inherit it to use its members, or make it a module` | You use a member of the shader `X` by name (`X.Member`) without inheriting it. Add `X` to the parents, or declare `X` as `module X` if it has no instance part. |
@@ -291,7 +353,7 @@ The messages about module code and overrides above are errors when an effect is 
 | `SDSL0207`: an `override module` of an instance method | Remove `module` from the override, or mark the shader `[Root]` if the effect mixes it only at its root. |
 | `SDSL0208`: instance code calls a module method through `base` | Make the calling method `module` (`module override` if it is an override), or mark the shader `[Root]`. |
 | `SDSL0212`: `clone` has no effect | Remove `clone` (the project upgrade does it). |
-| `SDSL0114`: an implementation of an abstract method without `override` | Add `override` (the project upgrade does it for abstract methods of your project). |
+| `SDSL0236`: the value of a composition is ignored | Remove `= value` (the project upgrade does it). |
 
 ## Learn more
 
