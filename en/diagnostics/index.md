@@ -85,6 +85,9 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0193](SDSL0193.md): a vector converted to a larger one (`float3` to `float4`)
 - [SDSL0194](SDSL0194.md): a stream read before any stage writes it, with no semantic
 - [SDSL0196](SDSL0196.md): an imported module that can't be found
+- [SDSL0197](SDSL0197.md): a shader used by name without inheriting it
+- [SDSL0198](SDSL0198.md): `import` of a shader
+- [SDSL0199](SDSL0199.md): a module that inherits a shader
 - [SDSL0200](SDSL0200.md): `override` with no inherited method
 - [SDSL0201](SDSL0201.md): `base` call with no inherited method
 - [SDSL0202](SDSL0202.md): too many generic values
@@ -101,6 +104,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0213](SDSL0213.md): pixel shader operation in a `[Pure]` module
 - [SDSL0214](SDSL0214.md): `partial` on a shader or module
 - [SDSL0215](SDSL0215.md): two structs with the same name
+- [SDSL0217](SDSL0217.md): a misspelled attribute on a shader, module or cbuffer
 - [SDSL0219](SDSL0219.md): comma expression that drops values (a vector type is missing)
 - [SDSL0220](SDSL0220.md): `register(...)` or `packoffset(...)` is ignored
 - [SDSL0232](SDSL0232.md): a comparison without parentheses inside `&`, `|` or `^`
