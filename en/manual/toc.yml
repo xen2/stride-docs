@@ -299,6 +299,8 @@ items:
                 href: graphics/effects-and-shaders/shading-language/quick-tour.md
               - name: Shaders and modules
                 href: graphics/effects-and-shaders/shading-language/shaders-and-modules.md
+              - name: Namespaces
+                href: graphics/effects-and-shaders/shading-language/namespaces.md
               - name: Inheritance and overrides
                 href: graphics/effects-and-shaders/shading-language/shader-classes-mixins-and-inheritance.md
               - name: Composition

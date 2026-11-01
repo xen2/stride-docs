@@ -7,7 +7,7 @@ Stride uses a programmable shading pipeline. You can write [custom shaders](cust
 Use:
 
 ```cs
-var myEffect = EffectSystem.LoadEffect("MyEffect").WaitForResult();
+var myEffect = EffectSystem.LoadEffect(MyEffectKeys.EffectName).WaitForResult();
 ```
 
 You can then bind the effect as [pipeline state](../low-level-api/pipeline-state.md).

@@ -52,7 +52,7 @@ namespace MyGame
             var meshRenderFeature = compositor.RenderFeatures.OfType<MeshRenderFeature>().First();
             meshRenderFeature.RenderStageSelectors.Add(new SimpleGroupToRenderStageSelector
             {
-                EffectName = "StrideForwardShadingEffect",
+                EffectName = StrideForwardShadingEffectKeys.EffectName,
                 RenderGroup = (RenderGroupMask)(1 << (int)RenderGroup),
                 RenderStage = shapesRenderState,
             });

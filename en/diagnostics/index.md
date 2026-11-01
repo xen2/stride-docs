@@ -112,6 +112,15 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0242](SDSL0242.md): `&` without parentheses inside `|`
 - [SDSL0243](SDSL0243.md): `&&` without parentheses inside `||`
 - [SDSL0244](SDSL0244.md): `+` or `-` without parentheses inside `<<` or `>>`
+- [SDSL0245](SDSL0245.md): the file name is not the name of the class
+- [SDSL0300](SDSL0300.md): a short name that matches two classes
+- [SDSL0301](SDSL0301.md): a shader declared twice
+- [SDSL0302](SDSL0302.md): an effect declared twice
+- [SDSL0303](SDSL0303.md): `[Replaces]` names a class that does not exist or is not visible
+- [SDSL0304](SDSL0304.md): two replacers of one class
+- [SDSL0305](SDSL0305.md): a replacer that does not inherit the original, is another kind, or is `[Root]`
+- [SDSL0306](SDSL0306.md): a replacer that does not forward the generic parameters
+- [SDSL0307](SDSL0307.md): a short name in a string, for a class in a namespace
 
 ## References
 

@@ -301,6 +301,7 @@ In an [effect](../effect-language.md) (`.sdfx`) or a C# @'Stride.Shaders.ShaderM
 ## See also
 
 * [Quick tour](quick-tour.md)
+* [Namespaces](namespaces.md)
 * [Inheritance and overrides](shader-classes-mixins-and-inheritance.md)
 * [Composition](composition.md)
 * [Streams and stage input/output](automatic-shader-stage-input-output.md)
