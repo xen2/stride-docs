@@ -262,12 +262,32 @@ shader MyShrink : ComputeColor
 
 A composition gets its shader from the effect. A value written after its name (`compose ComputeColor Tint = float4(1, 1, 1, 1);`) was never used, and since Stride 4.5 the compiler reports the warning SDSL0236 for it. The upgrade removes `= value` and keeps the rest of the line, attributes such as `[Default(...)]` included.
 
+### 11. Names of shaders and effects
+
+Shaders and effects now have namespaces, and a short name is only found through what is in scope ([Namespaces](../manual/graphics/effects-and-shaders/shading-language/namespaces.md)). The upgrade changes:
+
+- **Shaders:** it adds the `using` that a short name needs, when the namespace isn't one of the implicit ones. It writes key names in full where they are text (`[Link]`, generic arguments). It doesn't add a namespace to your shaders, so their names and keys don't change.
+- **C#:** literal names of shaders, effects and keys are rewritten in full. This goes by symbol, so only real uses of these APIs change. You can then replace a literal by the generated constant (`ComputeColorMultiplyKeys.ShaderName`), so that a typo is a build error.
+- **Assets:** effect logs, graphics compositors and materials are rewritten in full.
+
+```cs
+// Before
+new ShaderClassSource("ComputeColorMultiply");
+ParameterKeys.FindByName("Texturing.Texture0");
+
+// After
+new ShaderClassSource("Stride.Rendering.ComputeColorMultiply");
+ParameterKeys.FindByName("Stride.Rendering.Texturing.Texture0");
+```
+
 ## What needs a person
 
 - **Warning `Shader upgrade: ...: module code X calls Y.Z, an instance method; this works only if the class of X is mixed at the root, not used in a composition`.** Module code calls a method of a composition type. If the class is mixed at the root of the effect (a post effect, for example), nothing to do. If it's used in a composition slot, the effect fails to build with the "calls ... an instance method" error below: compute the value in instance code, or pass it as a parameter.
 - **Warning `Shader upgrade: ...: class X not found in the text, not upgraded`.** The upgrade couldn't find the declaration of `X` in its file (for example, it's built by a macro). Upgrade it by hand.
 - **Shaders from other packages.** The upgrade rewrites the `.sdsl` files of your project only. Shaders that come from a NuGet package or another library need a version of that package made for Stride 4.5. Library authors can run the same upgrade on their own shaders: see [Upgrading shaders outside a Stride project](#upgrading-shaders-outside-a-stride-project).
 - **Shaders loaded at run time.** `.sdsl` files that a tool reads from the disk at run time (vvvv's shader folders, for example) and code registered with `ShaderSourceManager.AddShaderSource` don't go through the project upgrade: the compiler reports the errors and warnings above for their old syntax. Upgrade the files with the same API (see below), and make a generator write the 4.5 syntax itself: `module` instead of `stage`, `import` of the streams modules in shaders used in compositions (see 6 above), `override` on implementations.
+- **Names built at run time.** The upgrade only sees literals. A string that your code builds and that names a namespaced shader, effect or key must use the full name. A shader gives SDSL0307, but a key name built as text stops matching with no error, so check code that uses `FindByName`, or that compares the name of a key.
+- **Compiled plugins that aren't rebuilt.** They name engine shaders by their short names, and get SDSL0307. Rebuild them against 4.5.
 - **Warning `Shader upgrade: ...: X calls base.F() of the module M, and F is overridden: check the call by hand`.** `base.F()` in instance code can't call a module method (SDSL0208), and the upgrade can't remove `base.` because another class overrides `F`. Make the calling method `module`, or call `F()` if that is what you mean.
 - **Warnings SDSL0204 to SDSL0208 on a shader that an effect mixes only at its root.** The compiler checks the module rules for every shader that isn't root-only. A shader that inherits or imports `ShaderBase`, `ShadingBase`, `ImageEffectShader`, `ComputeShaderBase`, `SpriteBase` or `ParticleBase` directly is root-only. An effect feature that reaches them only through another module (for example through `TransformationBase`) isn't: if the effect mixes it only at its root, mark it `[Root]` (see "Shaders and modules" in the manual of Stride 4.5). The upgrade adds `[Root]` itself when the shader's own code shows that it relies on the root (see 8 above); these warnings remain for the other cases.
 - **Classes added to the parents.** When a class used by name becomes a parent, it may come earlier in the order than the hidden mixin did before. This matters only if it overrides a method that another parent overrides too: check that the result is the one you want (see [Inheritance and overrides](../manual/graphics/effects-and-shaders/shading-language/shader-classes-mixins-and-inheritance.md)).
@@ -342,6 +362,11 @@ The new generic parameters:
 | ``'S' is a `module compose` declared by 'X', so it is one slot for the whole effect and must be supplied at the root.`` | Fill the slot `S` at the root of the effect (in the `.sdfx` file or the C# mixin tree), not in a composition. |
 | `SDSL0118: X declares generic parameter 'T' of type Texture2D ...` | Declare the texture as a member, or use a `LinkType` generic parameter (see [Removed engine shaders](#removed-engine-shaders)). |
 | `SDSL0119: X can only be mixed at the root of an effect ...` | `X` is root-only (a post effect, for example) but an effect uses it in a composition: mix it at the root, or compose a shader that doesn't inherit or import a root-only class. If `X` only reads the streams of `ShaderBase` or `ComputeShaderBase`, import `ShaderBaseStream` or `ComputeShaderStreams` instead. |
+| ``SDSL0191: Y inherits from X, but shader X can't be found. ... Did you mean `using A;`?`` (`SDSL0196` for `import`, `SDSL0110` for a use in code) | The name isn't in scope. Add the `using`, or write the full name (the project upgrade does it). |
+| `SDSL0300: X is ambiguous: it can be A.X or B.X.` | Write the full name of the one to use. |
+| `SDSL0301: X is declared twice: ...` | Rename one or put it in another namespace. To replace a shader, use `[Replaces]`. |
+| `SDSL0302: effect X is declared twice: ...` | Rename one or put it in another namespace. |
+| `SDSL0307: no shader or effect is named X. Did you mean A.X? ...` | Use `XKeys.ShaderName` or `XKeys.EffectName`, or the full name. |
 
 The messages about module code and overrides above are errors when an effect is built (in the asset build or at run time) and uses the shader in a composition. The same mistakes are reported earlier, as the warnings below, when the `.sdsl` file compiles, unless the shader is root-only. Each warning message also says the fix.
 
