@@ -1,6 +1,6 @@
 # Extension points
 
-An **extension point** is a `module` method that says how its overrides combine. The first definition declares a **kind**, and it can declare **phases**, so that the order of the overrides no longer depends on the order of the mixins.
+An **extension point** is a method, most often a `module` method, that says how its overrides combine. The first definition declares a **kind**, and it can declare **phases**, so that the order of the overrides no longer depends on the order of the mixins.
 
 ```cs
 module TransformationBase
@@ -84,7 +84,7 @@ module NormalMeshSkinning
 Two overrides of one phase need an order only when it matters: one writes a stream that the other reads or writes, or both have a side effect (a write to a buffer or a texture, an atomic operation, a `discard`). The compiler looks at the override and at the methods it calls, not at what `base` reaches. When nothing orders them:
 
 - in an effect built by the asset compiler, it is error [SDSL0137](../../../../diagnostics/SDSL0137.md);
-- in a mix built at run time, the order of the mixins decides.
+- in a mix built at run time, the order of the mixins decides, and the log says so (see [Effects built from C#](#effects-built-from-c)).
 
 A class comes after its parents, so inheritance is an order too.
 
@@ -136,6 +136,20 @@ It takes names of classes and of phases of this method, and a phase wins over a 
 
 An override that doesn't call `base` drops the overrides before it, unless it states it with `[Replaces]`. Replacing what one of your own parents contributed is normal inheritance and isn't reported. Otherwise, when an effect is built by the asset compiler, the compiler reports [SDSL0216](../../../../diagnostics/SDSL0216.md). In a mix built at run time, it writes the same text in the log, as information: replacing engine code is often the point there.
 
+## Effects built from C\#
+
+A mix built at run time (a `ShaderMixinSource` from C#, or a tool such as VL) follows the same rules, so its mixin order is only one source of order among others:
+
+- The order you add mixins never overrides a phase or `[After]`. A class with a phase runs in that phase, even if you add it first.
+- It orders the overrides of one phase, and all the overrides without a phase. So a tool that wants a class to be outermost adds it without a phase, last.
+- When it decides between two overrides whose order matters, the effect compiles, the log gets one information line, and the explanation prints `order: builder`.
+
+## Instance methods
+
+A kind can also go on an instance method. The effect of the rules is then the [composition](composition.md) node, not the whole effect: phases, `[After]` and `[Replaces]` order the classes mixed into that node. The engine declares `IStreamInitializer.ResetStream` as a pipeline, and `ShadowGroup.ComputeShadow`, `ShadowMapFilterBase.FilterShadow` and the two methods of `TextureProjectionGroup` as `[Replace]`.
+
+An instance method without a kind keeps the order of the mixins, and nothing is reported.
+
 ## See what an effect does
 
 The mixer's `Explanation` (and the corpus's `.explain.txt` files) gives the chain of each method and, for an extension point, its running order per phase:
@@ -152,6 +166,14 @@ module method PSMain() -> void = ShaderBase > ShadingBase > NormalBase > ShadowM
 ```
 
 `External` lists the overrides without a phase. A line `replaced by X: Y` gives what `[Replaces]` took out of the chain.
+
+A phase with several overrides also says what ordered them, for example `Input: A > B   order: after`:
+
+| Order | Meaning |
+|---|---|
+| `after` | `[After]` states it |
+| `builder` | the order of the mixins decided between overrides whose order matters, in a mix built at run time |
+| `tie-break` | the order of the mixins, and their order doesn't matter |
 
 ## Diagnostics
 
