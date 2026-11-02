@@ -123,6 +123,30 @@ Keys declared in C# (`[EffectKeys]`) or in the `params` of an effect keep their 
 
 If your C# code uses `ComputeColorTintKeys.Tint`, nothing changes. If it builds the name of a key as text, it must use the full name.
 
+## Shaders and files
+
+A shader is found by its full name, whichever file declares it. A file can have any name, and it can declare several shaders, in one or several namespaces:
+
+```cs
+namespace MyGame.Rendering;
+
+shader ComputeColorTint : ComputeColor
+{
+    [Color] float4 Tint;
+
+    override float4 Compute() { return Tint; }
+};
+
+shader ComputeColorFade : ComputeColorTint
+{
+    override float4 Compute() { return base.Compute() * 0.5f; }
+};
+```
+
+Asking for a shader compiles that shader only, so a mistake in `ComputeColorFade` doesn't stop `ComputeColorTint`. A shader can inherit a shader that comes later in its file.
+
+A shader that a file only declares inside an `#if` needs the macro to be defined when something asks for it. Otherwise the error is [SDSL0308](../../../../diagnostics/SDSL0308.md).
+
 ## Duplicate names
 
 A full name can only be declared once in a game. Two shaders with one full name are a build error that names both ([SDSL0301](../../../../diagnostics/SDSL0301.md)), even if one of them is in a package you depend on. Two effects with one full name are an error too ([SDSL0302](../../../../diagnostics/SDSL0302.md)).

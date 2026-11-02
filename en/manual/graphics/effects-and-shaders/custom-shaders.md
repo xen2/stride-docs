@@ -53,7 +53,7 @@ You can also use custom shaders to create custom post effects. For more informat
     ```
 
     >[!Note]
-    >Make sure the shader name in the file (eg `MyShader` above) is the same as the filename.
+    >A file is usually named after its shader (eg `MyShader` above). This is not required: a shader is found by its own name, and a file can declare several shaders.
 
     >[!Note]
     >To be accessible from the Game Studio Property Grid, the shader must inherit from `ComputeColor`.
