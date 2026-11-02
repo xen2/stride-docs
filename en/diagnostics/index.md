@@ -62,6 +62,8 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0143](SDSL0143.md): `extend` or `patch` of the wrong method
 - [SDSL0144](SDSL0144.md): `next` in a pipeline step
 - [SDSL0145](SDSL0145.md): a written swizzle that names an element twice
+- [SDSL0146](SDSL0146.md): classes that inherit, import or use each other in a cycle
+- [SDSL0147](SDSL0147.md): a preprocessor condition that reads a generic parameter
 - [SDSL0150](SDSL0150.md): a member of a buffer, such as `.Length` (buffers have `GetDimensions` instead)
 - [SDSL0155](SDSL0155.md): a matrix with one row or one column (`float1x3`, `float3x1`) is not supported yet
 - [SDSL0156](SDSL0156.md): an initializer list with the wrong number of values
