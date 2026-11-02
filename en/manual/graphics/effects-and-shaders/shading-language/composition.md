@@ -111,7 +111,7 @@ Module code runs once per effect, so it can't read the instance members of a sha
 
 A shader in a slot can override methods, and call `base`, like any shader.
 
-An override of a module method (for example `TransformPosition`, which a material feature changes to move vertices) is written `module override`. It runs once per effect, also when the shader is in several slots. A plain `override` of a module method in a composition is an error.
+An override of a module method (for example `TransformPosition`, which a material feature changes to move vertices) is written `module override`, or [`extend`](extension-points.md). It runs once per effect, also when the shader is in several slots. A plain `override` of a module method in a composition is an error.
 
 ## One slot for the whole effect
 

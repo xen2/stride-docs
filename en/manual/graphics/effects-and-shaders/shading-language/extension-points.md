@@ -13,18 +13,69 @@ shader TransformationWAndVP
 {
     import TransformationBase;
 
-    [Phase(World)]
-    module override void PreTransformPosition()
+    extend TransformationBase.PreTransformPosition in World
     {
-        base.PreTransformPosition();
         streams.PositionWS = mul(streams.Position, Transformation.World);
     }
 }
 ```
 
+## Extend a method
+
+```cs
+extend Owner.Method [(parameters)] [in Phase] [after X, Y] [replaces Z]
+{
+    ...
+}
+```
+
+`extend` works in a class that inherits or imports `Owner`, and it is an override: it follows the rules of this page.
+
+- **The parameters** are the ones of the first definition, with their names. You can write them again, and the compiler checks them.
+- **Without `in`**, it goes in the phase of the first definition, which is the innermost one for `[Around]`.
+- **A step of a `[Pipeline]`** doesn't call anything: the steps run in phase order. `next` is error [SDSL0144](../../../../diagnostics/SDSL0144.md).
+- **In `[Around]` and `[Replace]`**, `next(...)` calls the next one inward. An `extend` that doesn't call it and drops others is error [SDSL0136](../../../../diagnostics/SDSL0136.md), unless it says `replaces`.
+
+`next` only means this inside `extend` and `patch`. `extend`, `patch` and `next` are not reserved words.
+
+To change a method that is not an extension point, write `patch`. The word shows the cost: the owner of the method didn't plan for this.
+
+```cs
+patch NormalUpdate.GetTangentMatrix
+{
+    float3x3 m = next();
+    ...
+}
+```
+
+`extend` of a method that is not an extension point, and `patch` of one that is, are error [SDSL0143](../../../../diagnostics/SDSL0143.md).
+
+## The compat form
+
+`override` and `base` keep working, with attributes for what `extend` writes in words:
+
+```cs
+[Phase(World)]
+[After(TransformationSkinning)]
+[Replaces(TransformationWAndVP)]
+module override void PreTransformPosition()
+{
+    base.PreTransformPosition();
+    ...
+}
+```
+
+Some things can only be written this way, and they stay allowed:
+
+- an override without a phase, which runs outside every phase, with `base` anywhere in it;
+- `base` from another method of the class;
+- a pipeline step that doesn't call `base`, or calls it in the middle of its body.
+
+When a project is upgraded, an override with a phase, or of a `[Replace]` point, becomes an `extend` if it can. The rest of this page uses both forms.
+
 ## Kinds
 
-| Kind | Overrides | `base` |
+| Kind | Overrides | `next` or `base` |
 |---|---|---|
 | `[Replace]` | one wins, the last in the chain | calls the method before it |
 | `[Pipeline(A, B)]` | each one is a step, and every step runs, in phase order | first in the body: after the phases before it. Last: before them |
@@ -181,12 +232,15 @@ A phase with several overrides also says what ordered them, for example `Input: 
 ## Diagnostics
 
 - [SDSL0135](../../../../diagnostics/SDSL0135.md): a kind or a phase written the wrong way
+- [SDSL0136](../../../../diagnostics/SDSL0136.md): an `extend` drops others
 - [SDSL0137](../../../../diagnostics/SDSL0137.md): two overrides of one phase that nothing orders
 - [SDSL0138](../../../../diagnostics/SDSL0138.md): an order that can't be followed
 - [SDSL0139](../../../../diagnostics/SDSL0139.md): `[Collect]` is reserved
 - [SDSL0140](../../../../diagnostics/SDSL0140.md): the place of `base` doesn't fit the phase
 - [SDSL0141](../../../../diagnostics/SDSL0141.md): a phase the method doesn't declare
 - [SDSL0142](../../../../diagnostics/SDSL0142.md): a kind on an override
+- [SDSL0143](../../../../diagnostics/SDSL0143.md): `extend` or `patch` of the wrong method
+- [SDSL0144](../../../../diagnostics/SDSL0144.md): `next` in a pipeline step
 - [SDSL0216](../../../../diagnostics/SDSL0216.md): an override drops others
 - [SDSL0218](../../../../diagnostics/SDSL0218.md): a phase added next to one that doesn't exist
 - [SDSL0246](../../../../diagnostics/SDSL0246.md): an override of a method that is not an extension point

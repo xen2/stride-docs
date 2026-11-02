@@ -52,12 +52,15 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0133](SDSL0133.md): no constant buffer register left for push constants on Direct3D 11
 - [SDSL0134](SDSL0134.md): misaligned vector in the push constants
 - [SDSL0135](SDSL0135.md): a kind or a phase of an extension point written the wrong way
+- [SDSL0136](SDSL0136.md): an `extend` that drops the ones before it
 - [SDSL0137](SDSL0137.md): two overrides of one phase that nothing orders
 - [SDSL0138](SDSL0138.md): an order that can't be followed
 - [SDSL0139](SDSL0139.md): `[Collect]` is reserved
 - [SDSL0140](SDSL0140.md): the place of `base` does not fit the phase of a pipeline step
 - [SDSL0141](SDSL0141.md): a phase the method does not declare
 - [SDSL0142](SDSL0142.md): a kind on an override
+- [SDSL0143](SDSL0143.md): `extend` or `patch` of the wrong method
+- [SDSL0144](SDSL0144.md): `next` in a pipeline step
 - [SDSL0145](SDSL0145.md): a written swizzle that names an element twice
 - [SDSL0150](SDSL0150.md): a member of a buffer, such as `.Length` (buffers have `GetDimensions` instead)
 - [SDSL0155](SDSL0155.md): a matrix with one row or one column (`float1x3`, `float3x1`) is not supported yet
