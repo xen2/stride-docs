@@ -58,6 +58,8 @@ module PositionStream2
 }
 ```
 
+An override can add a phase of its own, for a phase that the first definition doesn't have: `[Phase(Wind, After = World, Before = Offset)]`. If a neighbour doesn't exist, the compiler reports [SDSL0218](../../../../diagnostics/SDSL0218.md) and the override runs without a phase.
+
 A phase always wins, over inheritance and over the order of the mixins: a class with a phase runs in that phase wherever it is mixed.
 
 ## The order inside a phase
@@ -79,7 +81,7 @@ module NormalMeshSkinning
 }
 ```
 
-`[After(X)]` means that this override runs after `X`, and it can name several classes. `X` has to exist, but it doesn't have to be in the effect: when it isn't, `[After]` does nothing. It orders overrides inside one phase, so that naming a class of a later phase is an error ([SDSL0138](../../../../diagnostics/SDSL0138.md)), like a circle of `[After]`.
+An effect can also state the order, with a line that wins over `[After]`: see [wiring lines](../effect-language.md#wiring-lines). `[After(X)]` means that this override runs after `X`, and it can name several classes. `X` has to exist, but it doesn't have to be in the effect: when it isn't, `[After]` does nothing. It orders overrides inside one phase, so that naming a class of a later phase is an error ([SDSL0138](../../../../diagnostics/SDSL0138.md)), like a circle of `[After]`.
 
 Two overrides of one phase need an order only when it matters: one writes a stream that the other reads or writes, or both have a side effect (a write to a buffer or a texture, an atomic operation, a `discard`). The compiler looks at the override and at the methods it calls, not at what `base` reaches. When nothing orders them:
 
@@ -165,12 +167,13 @@ module method PSMain() -> void = ShaderBase > ShadingBase > NormalBase > ShadowM
   dropped by ShadowMapCasterNoPixelShader: ShadingBase, NormalBase
 ```
 
-`External` lists the overrides without a phase. A line `replaced by X: Y` gives what `[Replaces]` took out of the chain.
+`External` lists the overrides without a phase. A line `replaced by X: Y` gives what `[Replaces]` took out of the chain, and `not bound by the effect: Y` what an `unbind` line took out.
 
 A phase with several overrides also says what ordered them, for example `Input: A > B   order: after`:
 
 | Order | Meaning |
 |---|---|
+| `order line` | a [wiring line](../effect-language.md#wiring-lines) of the effect states it |
 | `after` | `[After]` states it |
 | `builder` | the order of the mixins decided between overrides whose order matters, in a mix built at run time |
 | `tie-break` | the order of the mixins, and their order doesn't matter |
@@ -185,6 +188,7 @@ A phase with several overrides also says what ordered them, for example `Input: 
 - [SDSL0141](../../../../diagnostics/SDSL0141.md): a phase the method doesn't declare
 - [SDSL0142](../../../../diagnostics/SDSL0142.md): a kind on an override
 - [SDSL0216](../../../../diagnostics/SDSL0216.md): an override drops others
+- [SDSL0218](../../../../diagnostics/SDSL0218.md): a phase added next to one that doesn't exist
 - [SDSL0246](../../../../diagnostics/SDSL0246.md): an override of a method that is not an extension point
 
 ## See also

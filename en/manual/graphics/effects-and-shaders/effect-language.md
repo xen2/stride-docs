@@ -137,6 +137,74 @@ mixin compose myComposition = MyPartialEffect;
 
 You can use the `MyPartialEffect` mixin like any other mixin in the code.
 
+### Add to an effect from another project
+
+A `partial effect` with the name of an effect of another assembly adds to that effect instead of being an error. A plugin or a game can change an engine effect this way, without copying it:
+
+```cs
+namespace Stride.Rendering
+{
+    partial effect StrideForwardShadingEffect
+    {
+        mixin MyFogShader;
+        order ShadingBase.Shading.Post: MyFogShader, EffectCompiling;
+    }
+}
+```
+
+The statements of the effect come first, then the ones of each layer. An assembly that references another layer comes after it, so a game comes after the plugins it uses, and layers that don't know each other are in the order of their assembly names. For one `order` target, the last layer wins.
+
+### Wiring lines
+
+Wiring lines say how an effect uses the [extension points](shading-language/extension-points.md) of the classes it mixes. They name the first definition of the method, `Owner.Method`, and a phase:
+
+| Line | Meaning |
+|---|---|
+| `order Owner.Method.Phase: X, Y;` | `X` runs before `Y`. It wins over `[After]`, and it is what the error [SDSL0137](../../diagnostics/SDSL0137.md) asks for |
+| `bind Owner.Method.Phase = X;` | puts the override of `X` in this phase, for a class that names no phase or another one |
+| `unbind Owner.Method.Phase;` | nothing of this phase runs in this effect |
+| `unbind Owner.Method = X;` | the override of `X` doesn't run in this effect |
+| `phase Owner.Method.Wind after A before B;` | adds a phase. `after` or `before` alone is enough. A neighbour that doesn't exist makes it warning [SDSL0218](../../diagnostics/SDSL0218.md), and the line does nothing |
+
+Use `unbind` when an effect owns its pipeline: its overrides aren't dropped by accident, the effect says they aren't part of it. The shadow caster of the engine has no pixel shading:
+
+```cs
+partial effect ShadowMapCaster
+{
+    mixin ShadowMapCasterNoPixelShader;
+    unbind ShaderBase.PSMain.Shade;
+    unbind ShaderBase.PSMain.Input;
+}
+```
+
+A line about a method or a class that isn't in the effect does nothing, as the effect can be mixed in many ways. A phase that the method doesn't declare is error [SDSL0141](../../diagnostics/SDSL0141.md). The lines apply to `module` methods.
+
+`order`, `bind`, `unbind` and `phase` are not reserved words: a variable can have these names.
+
+### Features, optional slots and variants
+
+Three statements say what an `if` means, so that tools can list the permutations of an effect without running it:
+
+```cs
+effect MyEffect
+{
+    using params MyKeys;
+
+    // A bool parameter
+    feature MyKeys.UseFog { mixin Fog; } else { mixin NoFog; }
+
+    // A parameter that C# fills or not. Its value is data, whether it has one is a choice
+    optional MyKeys.Extension { mixin compose extension = MyKeys.Extension; }
+
+    // The effect with what the block adds
+    variant DepthOnly { unbind ShaderBase.PSMain.Shade; }
+}
+```
+
+`feature` and `optional` are the structural axes of the effect. `ShaderMixinManager.GetStructuralAxes` returns them, and the generated class carries them as `[EffectAxes]`.
+
+A `variant` is compiled under the name `MyEffect.DepthOnly`. Unlike `mixin child`, which stops at the place it is written, a variant has all the statements of the effect, wherever it is written. It goes at the top of the effect, not inside an `if`.
+
 ## See also
 
 * [Shading language (SDSL)](shading-language/index.md)

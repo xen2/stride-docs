@@ -112,6 +112,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0214](SDSL0214.md): `partial` on a shader or module
 - [SDSL0215](SDSL0215.md): two structs with the same name
 - [SDSL0216](SDSL0216.md): an override that drops the ones before it
+- [SDSL0218](SDSL0218.md): a phase added next to one that doesn't exist
 - [SDSL0217](SDSL0217.md): a misspelled attribute on a shader, module or cbuffer
 - [SDSL0219](SDSL0219.md): comma expression that drops values (a vector type is missing)
 - [SDSL0220](SDSL0220.md): `register(...)` or `packoffset(...)` is ignored
