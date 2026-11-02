@@ -373,6 +373,7 @@ The render stage named `GBuffer` in graphics compositors stays: it draws the `ZP
 | `SDSL0301: X is declared twice: ...` | Rename one or put it in another namespace. To replace a shader, use `[Replaces]`. |
 | `SDSL0302: effect X is declared twice: ...` | Rename one or put it in another namespace. |
 | `SDSL0307: no shader or effect is named X. Did you mean A.X? ...` | Use `XKeys.ShaderName` or `XKeys.EffectName`, or the full name. |
+| ``SDSL0308: F.sdsl doesn't declare X with the macros of this compile: ...`` | Define the macro in the effect that asks for `X`, or move `X` out of the `#if`. |
 | `... X was removed from the engine in Stride 4.5. To keep using it, copy it from the sources of Stride 4.4 into your project.` (at the end of `SDSL0190`, `SDSL0191`, `SDSL0196`, `SDSL0110`, or of `Shader X could not be found.` for a string) | See [Removed engine shaders](#removed-engine-shaders). |
 
 The messages about module code and overrides above are errors when an effect is built (in the asset build or at run time) and uses the shader in a composition. The same mistakes are reported earlier, as the warnings below, when the `.sdsl` file compiles, unless the shader is root-only. Each warning message also says the fix.
