@@ -51,6 +51,11 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0132](SDSL0132.md): cbuffer name with and without `[PushConstant]`
 - [SDSL0133](SDSL0133.md): no constant buffer register left for push constants on Direct3D 11
 - [SDSL0134](SDSL0134.md): misaligned vector in the push constants
+- [SDSL0135](SDSL0135.md): a kind or a phase of an extension point written the wrong way
+- [SDSL0139](SDSL0139.md): `[Collect]` is reserved
+- [SDSL0140](SDSL0140.md): the place of `base` does not fit the phase of a pipeline step
+- [SDSL0141](SDSL0141.md): a phase the method does not declare
+- [SDSL0142](SDSL0142.md): a kind on an override
 - [SDSL0145](SDSL0145.md): a written swizzle that names an element twice
 - [SDSL0150](SDSL0150.md): a member of a buffer, such as `.Length` (buffers have `GetDimensions` instead)
 - [SDSL0155](SDSL0155.md): a matrix with one row or one column (`float1x3`, `float3x1`) is not supported yet
@@ -104,6 +109,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0213](SDSL0213.md): pixel shader operation in a `[Pure]` module
 - [SDSL0214](SDSL0214.md): `partial` on a shader or module
 - [SDSL0215](SDSL0215.md): two structs with the same name
+- [SDSL0216](SDSL0216.md): an override that drops the ones before it
 - [SDSL0217](SDSL0217.md): a misspelled attribute on a shader, module or cbuffer
 - [SDSL0219](SDSL0219.md): comma expression that drops values (a vector type is missing)
 - [SDSL0220](SDSL0220.md): `register(...)` or `packoffset(...)` is ignored
@@ -113,6 +119,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0243](SDSL0243.md): `&&` without parentheses inside `||`
 - [SDSL0244](SDSL0244.md): `+` or `-` without parentheses inside `<<` or `>>`
 - [SDSL0245](SDSL0245.md): the file name is not the name of the class
+- [SDSL0246](SDSL0246.md): an override of a module method that is not an extension point
 - [SDSL0300](SDSL0300.md): a short name that matches two classes
 - [SDSL0301](SDSL0301.md): a shader declared twice
 - [SDSL0302](SDSL0302.md): an effect declared twice

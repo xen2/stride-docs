@@ -303,6 +303,8 @@ items:
                 href: graphics/effects-and-shaders/shading-language/namespaces.md
               - name: Inheritance and overrides
                 href: graphics/effects-and-shaders/shading-language/shader-classes-mixins-and-inheritance.md
+              - name: Extension points
+                href: graphics/effects-and-shaders/shading-language/extension-points.md
               - name: Composition
                 href: graphics/effects-and-shaders/shading-language/composition.md
               - name: Streams and stage input/output

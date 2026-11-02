@@ -20,6 +20,7 @@ New to SDSL? Start with the [Quick tour](quick-tour.md).
 - [Quick tour](quick-tour.md)
 - [Shaders and modules](shaders-and-modules.md)
 - [Inheritance and overrides](shader-classes-mixins-and-inheritance.md)
+- [Extension points](extension-points.md)
 - [Composition](composition.md)
 - [Streams and stage input/output](automatic-shader-stage-input-output.md)
 - [Shader stages](shader-stages.md)

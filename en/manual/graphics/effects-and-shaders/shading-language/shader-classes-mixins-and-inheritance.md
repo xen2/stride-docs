@@ -120,6 +120,8 @@ shader MixBA
 
 The same order applies when an [effect](../effect-language.md) mixes several shaders: `mixin ShaderA; mixin ShaderB;` gives the order of `MixAB`.
 
+For a `module` method, the first definition can say how its overrides combine, so that their order no longer depends on the order of the mixins: see [Extension points](extension-points.md).
+
 ## Keywords
 
 SDSL uses the keywords of HLSL, and adds these:
@@ -162,6 +164,7 @@ shader MyAnnotatedShader
 ## See also
 
 * [Shaders and modules](shaders-and-modules.md)
+* [Extension points](extension-points.md)
 * [Composition](composition.md)
 * [Streams and stage input/output](automatic-shader-stage-input-output.md)
 * [Shader stages](shader-stages.md)
