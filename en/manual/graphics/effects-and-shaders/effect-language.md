@@ -164,7 +164,7 @@ Wiring lines say how an effect uses the [extension points](shading-language/exte
 | `bind Owner.Method.Phase = X;` | puts the override of `X` in this phase, for a class that names no phase or another one |
 | `unbind Owner.Method.Phase;` | nothing of this phase runs in this effect |
 | `unbind Owner.Method = X;` | the override of `X` doesn't run in this effect |
-| `phase Owner.Method.Wind after A before B;` | adds a phase. `after` or `before` alone is enough. A neighbour that doesn't exist makes it warning [SDSL0218](../../diagnostics/SDSL0218.md), and the line does nothing |
+| `phase Owner.Method.Wind after A before B;` | adds a phase. `after` or `before` alone is enough. A neighbour that doesn't exist is error [SDSL0218](../../diagnostics/SDSL0218.md) |
 
 Use `unbind` when an effect owns its pipeline: its overrides aren't dropped by accident, the effect says they aren't part of it. The shadow caster of the engine has no pixel shading:
 

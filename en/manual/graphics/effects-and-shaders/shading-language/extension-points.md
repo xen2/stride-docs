@@ -38,7 +38,7 @@ extend Owner.Method [(parameters)] [in Phase] [after X, Y] [replaces Z]
 
 `next` only means this inside `extend` and `patch`. `extend`, `patch` and `next` are not reserved words.
 
-To change a method that is not an extension point, write `patch`. The word shows the cost: the owner of the method didn't plan for this.
+To change a method that is not an extension point, write `patch`: a plain `override` of it is an [error](#an-override-of-a-method-that-isnt-an-extension-point). The word shows the cost: the owner of the method didn't plan for this.
 
 ```cs
 patch NormalUpdate.GetTangentMatrix
@@ -109,7 +109,7 @@ module PositionStream2
 }
 ```
 
-An override can add a phase of its own, for a phase that the first definition doesn't have: `[Phase(Wind, After = World, Before = Offset)]`. If a neighbour doesn't exist, the compiler reports [SDSL0218](../../../../diagnostics/SDSL0218.md) and the override runs without a phase.
+An override can add a phase of its own, for a phase that the first definition doesn't have: `[Phase(Wind, After = World, Before = Offset)]`. A neighbour that doesn't exist is error [SDSL0218](../../../../diagnostics/SDSL0218.md).
 
 A phase always wins, over inheritance and over the order of the mixins: a class with a phase runs in that phase wherever it is mixed.
 
@@ -152,7 +152,7 @@ Being outermost changes two things for them:
 
 ## An override of a method that isn't an extension point
 
-Overriding a `module` method that declares no kind still works: the override takes its place in the chain from the mix order, and the compiler reports [SDSL0246](../../../../diagnostics/SDSL0246.md). Implementing an `abstract` method, and overriding an instance method, are not concerned.
+An `override` of a `module` method whose first definition declares no kind doesn't compile: error [SDSL0246](../../../../diagnostics/SDSL0246.md). Add the kind to the first definition. Upgrading a project does it for you when the first definition is in the project: `[Pipeline]` if an override calls `base`, else `[Replace]`. If it is in a library or in the engine, its author has to add it, or you can write `patch`. Implementing an `abstract` method, and overriding an instance method, are not concerned.
 
 ## Replacing an override
 
