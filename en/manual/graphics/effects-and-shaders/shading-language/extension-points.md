@@ -38,7 +38,7 @@ extend Owner.Method [(parameters)] [in Phase] [after X, Y] [replaces Z]
 
 `next` only means this inside `extend` and `patch`. `extend`, `patch` and `next` are not reserved words.
 
-To change a method that is not an extension point, write `patch`: a plain `override` of it is an [error](#an-override-of-a-method-that-isnt-an-extension-point). The word shows the cost: the owner of the method didn't plan for this.
+To change a method that is not an extension point, write `patch`: a plain `override` of it is an [error](#an-override-of-a-method-that-isnt-an-extension-point). The word shows the cost: the owner of the method didn't plan for this. In Stride 4.5 that word is the only cost: a `patch` compiles like an `override`. Its own shader variant and its hash in the lock file come in a later version.
 
 ```cs
 patch NormalUpdate.GetTangentMatrix
@@ -48,7 +48,22 @@ patch NormalUpdate.GetTangentMatrix
 }
 ```
 
-`extend` of a method that is not an extension point, and `patch` of one that is, are error [SDSL0143](../../../../diagnostics/SDSL0143.md).
+Two patches of one method need an order, or the result would depend on the order of the mix: error [SDSL0148](../../../../diagnostics/SDSL0148.md). A patch says which one it runs after, and an effect can say it for two patches it can't change:
+
+```cs
+patch NormalUpdate.GetTangentMatrix after MyOtherPatch
+{
+    ...
+}
+```
+
+```cs
+order NormalUpdate.GetTangentMatrix.External: MyOtherPatch, MyPatch;
+```
+
+A patch has no phase, because the method declares none. `External` is the implicit phase of what has no phase. The rule is on patches: plain overrides of an instance method keep following the order of the mix.
+
+`extend` of a method that is not an extension point, `patch` of one that is, and `patch` with `in` are error [SDSL0143](../../../../diagnostics/SDSL0143.md).
 
 ## The compat form
 
@@ -152,7 +167,7 @@ Being outermost changes two things for them:
 
 ## An override of a method that isn't an extension point
 
-An `override` of a `module` method whose first definition declares no kind doesn't compile: error [SDSL0246](../../../../diagnostics/SDSL0246.md). Add the kind to the first definition. Upgrading a project does it for you when the first definition is in the project: `[Pipeline]` if an override calls `base`, else `[Replace]`. If it is in a library or in the engine, its author has to add it, or you can write `patch`. Implementing an `abstract` method, and overriding an instance method, are not concerned.
+An `override` of a `module` method whose first definition declares no kind doesn't compile: error [SDSL0246](../../../../diagnostics/SDSL0246.md). Add the kind to the first definition. Upgrading a project does it for you when the first definition is in the project: `[Pipeline]` if an override calls `base`, else `[Replace]`. If you don't own the first definition, because it is in a library or in the engine, write [`patch`](#extend-a-method) instead of `override`, or ask its author to add the kind. Implementing an `abstract` method, and overriding an instance method, are not concerned.
 
 ## Replacing an override
 
@@ -241,6 +256,7 @@ A phase with several overrides also says what ordered them, for example `Input: 
 - [SDSL0142](../../../../diagnostics/SDSL0142.md): a kind on an override
 - [SDSL0143](../../../../diagnostics/SDSL0143.md): `extend` or `patch` of the wrong method
 - [SDSL0144](../../../../diagnostics/SDSL0144.md): `next` in a pipeline step
+- [SDSL0148](../../../../diagnostics/SDSL0148.md): two patches of one method that nothing orders
 - [SDSL0216](../../../../diagnostics/SDSL0216.md): an override drops others
 - [SDSL0218](../../../../diagnostics/SDSL0218.md): a phase added next to one that doesn't exist
 - [SDSL0246](../../../../diagnostics/SDSL0246.md): an override of a method that is not an extension point
