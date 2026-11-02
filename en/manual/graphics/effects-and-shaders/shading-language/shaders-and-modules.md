@@ -174,7 +174,7 @@ Module code (a module, or the `module` members and methods of a shader) exists o
 - An override must be the same kind as the method it overrides: `module override` for a module method, a plain `override` for an instance method. Instance code can't call a module method through `base`.
 - A `module compose` slot is one slot for the whole effect. It must be filled at the root of the effect.
 
-The compiler checks these rules when it compiles the shader, and reports warnings ([SDSL0204](../../../../diagnostics/SDSL0204.md) to [SDSL0208](../../../../diagnostics/SDSL0208.md)) that say the fix. When an effect uses the shader in a composition anyway, building the effect fails:
+The compiler checks these rules when it compiles the shader, and reports errors ([SDSL0204](../../../../diagnostics/SDSL0204.md) to [SDSL0208](../../../../diagnostics/SDSL0208.md)) that say the fix. When an effect uses the shader in a composition anyway, building the effect fails:
 
 ```
 Module code `MyBlur.Shading` reads `Radius`, an instance member of `MyBlur`. `MyBlur` is used in a composition (`ShadingColor0`), where each instance has its own `Radius`. Mark `Radius` `module`, or mix `MyBlur` at the root.
