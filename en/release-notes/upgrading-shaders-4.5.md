@@ -341,6 +341,12 @@ The new generic parameters:
 - `TSampler`: the name of the sampler key. The removed shaders used `Texturing.Sampler`.
 - `TRgba`: the channels to read, `rgba` for all of them.
 
+Stride 4.5 also removes these shaders, with their key classes, because nothing uses them: `BackgroundVelocity`, `ComputeColorScaler`, `FlattenLayers`, `GBuffer`, `SelectedSpriteShader`, `ShadingColor`, `SwapUV`, `TransformationMatrix`, `TransformationWVP`, `TransformationZero`, and the effects `BackgroundVelocityEffect` and `SelectedSprite`.
+
+They have no replacement, and the project upgrade can't write one. To keep using one of them, copy it from the sources of Stride 4.4 into your project. A shader or a string that still names one gets a message that says it was removed.
+
+The render stage named `GBuffer` in graphics compositors stays: it draws the `ZPrepass` child effect, not this shader.
+
 ## Error messages and their fix
 
 | Message | Fix |
@@ -367,6 +373,7 @@ The new generic parameters:
 | `SDSL0301: X is declared twice: ...` | Rename one or put it in another namespace. To replace a shader, use `[Replaces]`. |
 | `SDSL0302: effect X is declared twice: ...` | Rename one or put it in another namespace. |
 | `SDSL0307: no shader or effect is named X. Did you mean A.X? ...` | Use `XKeys.ShaderName` or `XKeys.EffectName`, or the full name. |
+| `... X was removed from the engine in Stride 4.5. To keep using it, copy it from the sources of Stride 4.4 into your project.` (at the end of `SDSL0190`, `SDSL0191`, `SDSL0196`, `SDSL0110`, or of `Shader X could not be found.` for a string) | See [Removed engine shaders](#removed-engine-shaders). |
 
 The messages about module code and overrides above are errors when an effect is built (in the asset build or at run time) and uses the shader in a composition. The same mistakes are reported earlier, as the warnings below, when the `.sdsl` file compiles, unless the shader is root-only. Each warning message also says the fix.
 
