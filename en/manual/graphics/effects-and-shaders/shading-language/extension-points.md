@@ -101,9 +101,40 @@ Being outermost changes two things for them:
 
 Overriding a `module` method that declares no kind still works: the override takes its place in the chain from the mix order, and the compiler reports [SDSL0246](../../../../diagnostics/SDSL0246.md). Implementing an `abstract` method, and overriding an instance method, are not concerned.
 
+## Replacing an override
+
+`[Replaces]` on an override says what doesn't run in this chain when this class is in the effect:
+
+```cs
+module NormalVSSkinningFromMesh
+{
+    import NormalFromMesh;
+
+    [Phase(Generate)]
+    [Replaces(NormalFromMesh)]
+    override void GenerateNormal_VS()
+    {
+        streams.normalWS = streams.meshNormal;
+    }
+}
+
+shader MaterialFrontBackBlendShader : ShadingBase
+{
+    // Whoever provides the surface color, this class provides it instead
+    [Phase(Surface)]
+    [Replaces(Surface)]
+    module override float4 Shading() { ... }
+}
+```
+
+It takes names of classes and of phases of this method, and a phase wins over a class of the same name. A class that isn't in the effect is ignored, but it has to exist. Only this chain changes: the class still contributes to other methods, and `base` reaches the next override inward. Two overrides can't replace each other ([SDSL0138](../../../../diagnostics/SDSL0138.md)).
+
+> [!NOTE]
+> On a class, `[Replaces("Full.Name")]` takes a string and [replaces the whole class](namespaces.md), in every effect. On an override, `[Replaces(Name)]` takes names without quotes, and replaces one contributor of one method.
+
 ## Dropping an override
 
-An override that doesn't call `base` drops the overrides before it. Replacing what one of your own parents contributed is normal inheritance and isn't reported. Otherwise, when an effect is built by the asset compiler, the compiler reports [SDSL0216](../../../../diagnostics/SDSL0216.md). In a mix built at run time, it writes the same text in the log, as information: replacing engine code is often the point there.
+An override that doesn't call `base` drops the overrides before it, unless it states it with `[Replaces]`. Replacing what one of your own parents contributed is normal inheritance and isn't reported. Otherwise, when an effect is built by the asset compiler, the compiler reports [SDSL0216](../../../../diagnostics/SDSL0216.md). In a mix built at run time, it writes the same text in the log, as information: replacing engine code is often the point there.
 
 ## See what an effect does
 
@@ -120,7 +151,7 @@ module method PSMain() -> void = ShaderBase > ShadingBase > NormalBase > ShadowM
   dropped by ShadowMapCasterNoPixelShader: ShadingBase, NormalBase
 ```
 
-`External` lists the overrides without a phase.
+`External` lists the overrides without a phase. A line `replaced by X: Y` gives what `[Replaces]` took out of the chain.
 
 ## Diagnostics
 

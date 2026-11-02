@@ -155,7 +155,7 @@ A game shader that has the short name of an engine shader, in another namespace 
 
 ## Replace a shader
 
-`[Replaces]` takes the full name of a shader and changes it for the whole game, also where engine shaders use it. The new shader inherits the original and overrides what it changes:
+`[Replaces]` on a class takes the full name of a shader and changes it for the whole game, also where engine shaders use it. The new shader inherits the original and overrides what it changes: To replace one contributor of one method, put it on an override: see [Extension points](extension-points.md).
 
 ```cs
 namespace MyGame.Rendering;
