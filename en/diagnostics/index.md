@@ -52,6 +52,8 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0133](SDSL0133.md): no constant buffer register left for push constants on Direct3D 11
 - [SDSL0134](SDSL0134.md): misaligned vector in the push constants
 - [SDSL0135](SDSL0135.md): a kind or a phase of an extension point written the wrong way
+- [SDSL0137](SDSL0137.md): two overrides of one phase that nothing orders
+- [SDSL0138](SDSL0138.md): an order that can't be followed
 - [SDSL0139](SDSL0139.md): `[Collect]` is reserved
 - [SDSL0140](SDSL0140.md): the place of `base` does not fit the phase of a pipeline step
 - [SDSL0141](SDSL0141.md): a phase the method does not declare

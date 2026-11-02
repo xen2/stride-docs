@@ -58,13 +58,44 @@ module PositionStream2
 }
 ```
 
-In one phase, overrides keep the order of the mixins.
+A phase always wins, over inheritance and over the order of the mixins: a class with a phase runs in that phase wherever it is mixed.
+
+## The order inside a phase
+
+Overrides of one phase keep the order of the mixins, unless one of them says otherwise with `[After]`:
+
+```cs
+module NormalMeshSkinning
+{
+    import TransformationSkinning;
+
+    [Phase(World)]
+    [After(TransformationSkinning)]
+    override void PreTransformPosition()
+    {
+        base.PreTransformPosition();
+        streams.meshNormal = normalize(mul(streams.meshNormal, (float3x3)streams.skinningBlendMatrix));
+    }
+}
+```
+
+`[After(X)]` means that this override runs after `X`, and it can name several classes. `X` has to exist, but it doesn't have to be in the effect: when it isn't, `[After]` does nothing. It orders overrides inside one phase, so that naming a class of a later phase is an error ([SDSL0138](../../../../diagnostics/SDSL0138.md)), like a circle of `[After]`.
+
+Two overrides of one phase need an order only when it matters: one writes a stream that the other reads or writes, or both have a side effect (a write to a buffer or a texture, an atomic operation, a `discard`). The compiler looks at the override and at the methods it calls, not at what `base` reaches. When nothing orders them:
+
+- in an effect built by the asset compiler, it is error [SDSL0137](../../../../diagnostics/SDSL0137.md);
+- in a mix built at run time, the order of the mixins decides.
+
+A class comes after its parents, so inheritance is an order too.
 
 ## An override without a phase
 
-An override without `[Phase]` keeps its exact place in the override chain, and `base` works as it always did. Shaders written for an earlier version of Stride don't change, and don't need phases. It can call `base` anywhere in its body, also from another method.
+An override without `[Phase]` is in an implicit phase, `External`, after every phase the method declares. Overrides in `External` keep the order of the mixins and never conflict. They can call `base` anywhere in their body, also from another method. Shaders written for an earlier version of Stride keep compiling and don't need phases.
 
-Only overrides with a phase are sorted, among the places they hold in the chain.
+Being outermost changes two things for them:
+
+- An override without a phase runs outside every phase, even when it is mixed before a class with a phase.
+- If it doesn't call `base`, it drops the overrides with a phase, also the ones mixed after it. Give it a phase to keep them, for example `Surface` for a `Shading` that provides the surface color.
 
 ## An override of a method that isn't an extension point
 
@@ -94,6 +125,8 @@ module method PSMain() -> void = ShaderBase > ShadingBase > NormalBase > ShadowM
 ## Diagnostics
 
 - [SDSL0135](../../../../diagnostics/SDSL0135.md): a kind or a phase written the wrong way
+- [SDSL0137](../../../../diagnostics/SDSL0137.md): two overrides of one phase that nothing orders
+- [SDSL0138](../../../../diagnostics/SDSL0138.md): an order that can't be followed
 - [SDSL0139](../../../../diagnostics/SDSL0139.md): `[Collect]` is reserved
 - [SDSL0140](../../../../diagnostics/SDSL0140.md): the place of `base` doesn't fit the phase
 - [SDSL0141](../../../../diagnostics/SDSL0141.md): a phase the method doesn't declare
