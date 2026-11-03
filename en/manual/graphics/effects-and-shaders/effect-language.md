@@ -198,6 +198,8 @@ partial effect ShadowMapCaster
 
 A line about a method or a class that isn't in the effect does nothing, as the effect can be mixed in many ways. A phase that the method doesn't declare is error [SDSL0141](../../diagnostics/SDSL0141.md). The lines apply to `module` methods.
 
+A wiring line belongs to the whole effect. It works at the top level of an effect and in an effect you mix with `mixin`. In an effect you mix with `mixin compose` it is error [SDSL0151](../../../diagnostics/SDSL0151.md).
+
 `order`, `bind`, `unbind` and `phase` are not reserved words: a variable can have these names.
 
 ### Features, optional slots and variants
