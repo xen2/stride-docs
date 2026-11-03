@@ -202,7 +202,7 @@ It takes names of classes and of phases of this method, and a phase wins over a 
 
 ## Dropping an override
 
-An override that doesn't call `base` drops the overrides before it, unless it states it with `[Replaces]`. Replacing what one of your own parents contributed is normal inheritance and isn't reported. Otherwise, when an effect is built by the asset compiler, the compiler reports [SDSL0216](../../../../diagnostics/SDSL0216.md). In a mix built at run time, it writes the same text in the log, as information: replacing engine code is often the point there.
+An override that doesn't call `base` drops the overrides before it, unless it states it with `[Replaces]`. Replacing what one of your own parents contributed is normal inheritance and isn't reported. Otherwise, when an effect is built by the asset compiler, it is error [SDSL0216](../../../../diagnostics/SDSL0216.md). In a mix built at run time, the compiler writes the same text in the log, as information: replacing engine code is often the point there.
 
 ## Effects built from C\#
 
