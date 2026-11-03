@@ -149,7 +149,7 @@ module NormalMeshSkinning
 
 An effect can also state the order, with a line that wins over `[After]`: see [wiring lines](../effect-language.md#wiring-lines). `[After(X)]` means that this override runs after `X`, and it can name several classes. `X` has to exist, but it doesn't have to be in the effect: when it isn't, `[After]` does nothing. It orders overrides inside one phase, so that naming a class of a later phase is an error ([SDSL0138](../../../../diagnostics/SDSL0138.md)), like a circle of `[After]`.
 
-Two overrides of one phase need an order only when it matters: one writes a stream that the other reads or writes, or both have a side effect (a write to a buffer or a texture, an atomic operation, a `discard`). The compiler looks at the override and at the methods it calls, not at what `base` reaches. When nothing orders them:
+Two overrides of one phase need an order only when it matters: one writes a stream that the other reads or writes, or both have a side effect (a write to a buffer or a texture, an atomic operation, a `discard`). Streams with one semantic count as one stream, because they become one field. A store to the whole of `streams`, such as `streams = input[i]`, writes every stream. The compiler looks at the override and at the methods it calls, not at what `base` reaches. When nothing orders them:
 
 - in an effect built by the asset compiler, it is error [SDSL0137](../../../../diagnostics/SDSL0137.md);
 - in a mix built at run time, the order of the mixins decides, and the log says so (see [Effects built from C#](#effects-built-from-c)).
