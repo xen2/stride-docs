@@ -104,13 +104,15 @@ SDSL has a convenient way to pass parameters across the different stages of your
 
 - variables
 - defined like any shader member, with the stream keyword
-- used with the stream prefix (omitting it results in a compilation error). When the stream is ambiguous (same name), you should provide the shader name in front of the variable (ie `streams.<my_shader>.<my_variable>`)
+- used with the `streams.` prefix (omitting it results in a compilation error)
 
 Streams regroup the concepts of attributes, varyings and outputs in a single concept.
 
-- An attribute is a stream read in a vertex shader before being written to.
-- A varying is a stream present across shader stages.
-- An output is a stream assigned before being read.
+- An attribute is a stream whose value comes from the vertex buffer. It needs a semantic.
+- A varying is a stream whose value goes from one stage to the next.
+- An output is a stream that the last stage gives to the GPU, such as `ColorTarget`, which has the semantic `SV_Target0`.
+
+[How streams work](#how-streams-work) below gives the exact rules.
 
 Think of streams as global objects that you can access everywhere without specifying as a parameter of your functions.
 
@@ -133,23 +135,6 @@ shader BaseShader
 		return streams.myVar;
 	}
 };
-```
-
-**Code:** Stream specification
-
-```cs
-shader StreamShader
-{
-	stream float3 myVar;
-};
-
-shader ShaderA : BaseShader, StreamShader
-{
-	float3 Test()
-	{
-		return streams.BaseShader.myVar + streams.StreamShader.myVar;
-	}
-}
 ```
 
 ### Example of SDSL shader
@@ -208,6 +193,116 @@ shader MyShader
 In SDSL, adding a new attribute is as simple as adding it to the pool of streams and using it where you want.
 
 ![media/sdsl_add_normal.png](media/sdsl_add_normal.png)
+
+## How streams work
+
+`streams` is one value per stage. It holds the fields of every `stream` in the effect that this stage uses. Each stage has its own generated struct, with only those fields.
+
+### Where a value comes from
+
+A stage gets a stream's value from the stage before, unless a whole write to `streams.X` always runs first. These writes don't count, because they might not run or don't write everything:
+
+- a write inside an `if` or a loop,
+- a write after an early `return`,
+- a write to one component (`streams.X.x = 1;`),
+- a write to a `Streams` copy.
+
+Here the pixel shader's write is inside an `if`, so `tint` also comes from the vertex shader. When `UseWhite` is false, the pixel shader reads the vertex shader's value:
+
+```cs
+shader CarriedTint
+{
+	import ShaderBase;
+
+	stream float4 pos : POSITION;
+	stream float4 tint;
+
+	bool UseWhite;
+
+	module override void VSMain()
+	{
+		streams.ShadingPosition = streams.pos;
+		streams.tint = float4(0.2, 0.4, 0.6, 1);
+	}
+
+	module override void PSMain()
+	{
+		if (UseWhite)
+			streams.tint = float4(1, 1, 1, 1);
+		streams.ColorTarget = streams.tint;
+	}
+};
+```
+
+The value goes back as far as needed:
+
+- A vertex shader that doesn't touch a stream still passes it on. So a stream with a semantic that the pixel shader reads first comes from the vertex buffer.
+- In the vertex shader, a stream with a vertex input semantic gets its value from the vertex buffer. So `streams.col.w = 1;` keeps the other components of the attribute. `SV_` semantics aren't vertex inputs, except `SV_VertexID` and `SV_InstanceID`.
+- Geometry and tessellation shaders get the values in `input`, not in `streams`. They reach `streams` when the code assigns them (`streams = input[i];`). This overwrites the fields that the input has and keeps the others. See [Shader stages](shader-stages.md).
+
+When nothing can give the value, there are two cases:
+
+- **The stream is read with no write before it:** this is the error [SDSL0194](../../../../diagnostics/SDSL0194.md).
+- **The stream is read after a write that might not have run, and no earlier stage uses it:** the stream starts at zero, with no error. A semantic only counts in the vertex shader: if a pixel shader writes `streams.col` in an `if` and no earlier stage uses `col`, the other path reads zero, not the vertex buffer.
+
+>[!Note]
+>The compiler doesn't compare the branches of an `if`, so a write in both branches also counts as a write that might not run. The result is correct, but the stage gets one input it doesn't need. In a vertex shader, on a stream with a vertex input semantic, that input is a vertex buffer attribute, so the shader asks for an attribute it never uses. To avoid it, write once: `streams.col = useWhite ? white : grey;`.
+
+### One semantic, one field
+
+Streams with the same semantic are one field in the effect, even with different names in different classes. A write to one name can be read through the other. They must have the same type, or the effect doesn't compile.
+
+Streams with the same name and no semantic, in different classes, are separate fields, and each class uses its own. A class that inherits both only reaches one of them, with no message, so rename one if you need both.
+
+### Streams in a composition
+
+In a shader used in a [composition](composition.md), the keyword decides how many fields you get:
+
+```cs
+shader LayerStreams
+{
+	stream float3 layerColor;        // one field for each instance of the shader
+	module stream float3 sharedColor; // one field for the effect
+};
+```
+
+A write to `layerColor` in one instance doesn't change it in another. A write to `sharedColor` does.
+
+### `Streams` values
+
+`Streams` is the type of the `streams` value. Use it to keep a copy or to pass the fields to a method:
+
+```cs
+shader KeepStreams
+{
+	import ShaderBase;
+
+	stream float4 pos : POSITION;
+	stream float4 tint;
+
+	float4 TintOf(Streams values)
+	{
+		return values.tint * 0.5;
+	}
+
+	module override void VSMain()
+	{
+		streams.ShadingPosition = streams.pos;
+		streams.tint = float4(0.2, 0.4, 0.6, 1);
+	}
+
+	module override void PSMain()
+	{
+		Streams backup = streams;
+		streams.tint = float4(1, 1, 1, 1);
+		streams.ColorTarget = TintOf(backup);
+	}
+};
+```
+
+- A copy has the fields of the stage it is in, and a method used in two stages gets the fields of each stage.
+- A copy is separate: a write to it doesn't change `streams`, until you assign it back (`streams = backup;`).
+- A copy taken before a write keeps the old value: `backup.tint` above is the value from the vertex shader.
 
 ## Partial structs
 
