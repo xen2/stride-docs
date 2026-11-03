@@ -147,7 +147,7 @@ module NormalMeshSkinning
 }
 ```
 
-An effect can also state the order, with a line that wins over `[After]`: see [wiring lines](../effect-language.md#wiring-lines). `[After(X)]` means that this override runs after `X`, and it can name several classes. `X` has to exist, but it doesn't have to be in the effect: when it isn't, `[After]` does nothing. It orders overrides inside one phase, so that naming a class of a later phase is an error ([SDSL0138](../../../../diagnostics/SDSL0138.md)), like a circle of `[After]`.
+An effect can also state the order, with a rule that wins over `[After]`: see [linkage rules](../effect-language.md#linkage-rules). `[After(X)]` means that this override runs after `X`, and it can name several classes. `X` has to exist, but it doesn't have to be in the effect: when it isn't, `[After]` does nothing. It orders overrides inside one phase, so that naming a class of a later phase is an error ([SDSL0138](../../../../diagnostics/SDSL0138.md)), like a circle of `[After]`.
 
 Two overrides of one phase need an order only when it matters: one writes a stream that the other reads or writes, or both have a side effect (a write to a buffer or a texture, an atomic operation, a `discard`). Streams with one semantic count as one stream, because they become one field. A store to the whole of `streams`, such as `streams = input[i]`, writes every stream. The compiler looks at the override and at the methods it calls, not at what `base` reaches. When nothing orders them:
 
@@ -233,13 +233,13 @@ module method PSMain() -> void = ShaderBase > ShadingBase > NormalBase > ShadowM
   dropped by ShadowMapCasterNoPixelShader: ShadingBase, NormalBase
 ```
 
-`External` lists the overrides without a phase. A line `replaced by X: Y` gives what `[Replaces]` took out of the chain, and `not bound by the effect: Y` what an `unbind` line took out.
+`External` lists the overrides without a phase. A line `replaced by X: Y` gives what `[Replaces]` took out of the chain, and `not bound by the effect: Y` what an `unbind` rule took out.
 
 A phase with several overrides also says what ordered them, for example `Input: A > B   order: after`:
 
 | Order | Meaning |
 |---|---|
-| `order line` | a [wiring line](../effect-language.md#wiring-lines) of the effect states it |
+| `order rule` | a [linkage rule](../effect-language.md#linkage-rules) of the effect states it |
 | `after` | `[After]` states it |
 | `builder` | the order of the mixins decided between overrides whose order matters, in a mix built at run time |
 | `tie-break` | the order of the mixins, and their order doesn't matter |

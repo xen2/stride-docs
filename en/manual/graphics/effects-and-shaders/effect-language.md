@@ -173,11 +173,11 @@ namespace Stride.Rendering
 
 The statements of the effect come first, then the ones of each layer. An assembly that references another layer comes after it, so a game comes after the plugins it uses, and layers that don't know each other are in the order of their assembly names. For one `order` target, the last layer wins.
 
-### Wiring lines
+### Linkage rules
 
-Wiring lines say how an effect uses the [extension points](shading-language/extension-points.md) of the classes it mixes. They name the first definition of the method, `Owner.Method`, and a phase:
+Linkage rules say how an effect uses the [extension points](shading-language/extension-points.md) of the classes it mixes. They name the first definition of the method, `Owner.Method`, and a phase:
 
-| Line | Meaning |
+| Rule | Meaning |
 |---|---|
 | `order Owner.Method.Phase: X, Y;` | `X` runs before `Y`. It wins over `[After]`, and it is what the error [SDSL0137](../../diagnostics/SDSL0137.md) asks for |
 | `bind Owner.Method.Phase = X;` | puts the override of `X` in this phase, for a class that names no phase or another one |
@@ -196,9 +196,11 @@ partial effect ShadowMapCaster
 }
 ```
 
-A line about a method or a class that isn't in the effect does nothing, as the effect can be mixed in many ways. A phase that the method doesn't declare is error [SDSL0141](../../diagnostics/SDSL0141.md). The lines apply to `module` methods.
+A rule about a method or a class that isn't in the effect does nothing, as the effect can be mixed in many ways. A phase that the method doesn't declare is error [SDSL0141](../../diagnostics/SDSL0141.md). The rules apply to `module` methods.
 
-A wiring line belongs to the whole effect. It works at the top level of an effect and in an effect you mix with `mixin`. In an effect you mix with `mixin compose` it is error [SDSL0151](../../../diagnostics/SDSL0151.md).
+A linkage rule belongs to the whole effect. It works at the top level of an effect and in an effect you mix with `mixin`. In an effect you mix with `mixin compose` it is error [SDSL0151](../../../diagnostics/SDSL0151.md).
+
+`[Link]` is a different thing: it ties a member to a parameter key, and has nothing to do with linkage rules.
 
 `order`, `bind`, `unbind` and `phase` are not reserved words: a variable can have these names.
 
