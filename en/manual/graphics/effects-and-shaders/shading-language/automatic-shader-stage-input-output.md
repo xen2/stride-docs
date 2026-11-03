@@ -252,7 +252,11 @@ When nothing can give the value, there are two cases:
 
 Streams with the same semantic are one field in the effect, even with different names in different classes. A write to one name can be read through the other. They must have the same type, or the effect doesn't compile.
 
-Streams with the same name and no semantic, in different classes, are separate fields, and each class uses its own. A class that inherits both only reaches one of them, with no message, so rename one if you need both.
+Streams with the same name, in different classes, are separate fields unless they also have the same semantic and type. Each class uses its own, so this is correct in one effect, and in a class that inherits both and doesn't name them. In a class that inherits or imports both, `streams.name` is the error [SDSL0152](../../../../diagnostics/SDSL0152.md): rename one of them. One stream reached through two parents is still one stream.
+
+A stream that a class declares itself hides an inherited stream of that name in that class, and they are two fields.
+
+A stream is named without its class: `streams.MyShader.myVar` is the error [SDSL0153](../../../../diagnostics/SDSL0153.md).
 
 ### Streams in a composition
 

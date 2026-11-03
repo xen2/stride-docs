@@ -31,6 +31,7 @@ What Stride 4.4 reported as a warning, or let through silently, is now an error 
 | [SDSL0204](../diagnostics/SDSL0204.md) to [SDSL0208](../diagnostics/SDSL0208.md) | `module` code that uses instance members, and overrides of the wrong kind | marks what it can as `module`, and adds `[Root]` to a class nothing uses in a composition |
 | [SDSL0200](../diagnostics/SDSL0200.md), [SDSL0201](../diagnostics/SDSL0201.md), [SDSL0202](../diagnostics/SDSL0202.md) | an `override` or a `base` call with no inherited method, too many generic values | you fix it |
 | [SDSL0209](../diagnostics/SDSL0209.md), [SDSL0210](../diagnostics/SDSL0210.md), [SDSL0211](../diagnostics/SDSL0211.md), [SDSL0213](../diagnostics/SDSL0213.md) | `[Pure]` rules | you fix it |
+| [SDSL0152](../diagnostics/SDSL0152.md), [SDSL0153](../diagnostics/SDSL0153.md) | a stream name that a class reaches twice, and a class in front of the name of a stream | you fix it |
 | [SDSL0215](../diagnostics/SDSL0215.md) | two structs of one name in a class | you fix it |
 | [SDSL0216](../diagnostics/SDSL0216.md) | an override that drops others without saying so, in an effect built by the asset compiler | writes `[Replaces]` when the class inherited what it drops; otherwise you fix it: `[Replaces]` or `base` |
 | [SDSL0217](../diagnostics/SDSL0217.md) | an attribute misspelled on a class or a `cbuffer` | you fix it |
