@@ -65,6 +65,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0146](SDSL0146.md): classes that inherit, import or use each other in a cycle
 - [SDSL0147](SDSL0147.md): a preprocessor condition that reads a generic parameter
 - [SDSL0148](SDSL0148.md): two patches of one method that nothing orders
+- [SDSL0149](SDSL0149.md): a macro set inside a composition
 - [SDSL0150](SDSL0150.md): a member of a buffer, such as `.Length` (buffers have `GetDimensions` instead)
 - [SDSL0152](SDSL0152.md): a stream name that a class reaches twice
 - [SDSL0153](SDSL0153.md): a class in front of the name of a stream

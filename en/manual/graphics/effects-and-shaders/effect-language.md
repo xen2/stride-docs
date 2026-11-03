@@ -7,8 +7,17 @@ An **effect** is the final shader used to draw: it puts together the [shaders an
 You can create a shader at runtime with @'Stride.Shaders.ShaderSource' objects. Shaders come in three types:
 
 - @'Stride.Shaders.ShaderClassSource' correspond to a unique shader class
-- @'Stride.Shaders.ShaderMixinSource' mix several @'Stride.Shaders.ShaderSource', set preprocessor values, define compositions
+- @'Stride.Shaders.ShaderMixinSource' mix several @'Stride.Shaders.ShaderSource', define compositions
 - @'Stride.Shaders.ShaderArraySource' are used for arrays of compositions
+
+To compile a shader, give an @'Stride.Shaders.EffectSource' to the effect compiler. It holds the root of the tree and the preprocessor values of the whole effect:
+
+```cs
+var effect = new EffectSource(root)
+{
+    Macros = { new ShaderMacro("USE_DETAIL", 1) },
+};
+```
 
 This method produces shaders at runtime. However, many platforms don't support HLSL and have no ability to compile shaders at runtime. Additionally, the approach doesn't benefit from the reusability of mixins.
 
@@ -104,6 +113,16 @@ params MyParameters
 	bool EnableSpecular = true; // true is the default value
 }
 ```
+
+### Macros
+
+To set a preprocessor value for every class of the effect, use `mixin macro <name> = <value>`.
+
+```cs
+mixin macro USE_DETAIL = 1;
+```
+
+A macro belongs to the whole effect. It works at the top level of an effect and in an effect you mix with `mixin`. Inside a `mixin compose` it is error [SDSL0149](../../../diagnostics/SDSL0149.md). In a composition, use a generic for a value, or a separate class for a different shape.
 
 ### Compositions
 

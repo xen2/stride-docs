@@ -206,7 +206,7 @@ An override that doesn't call `base` drops the overrides before it, unless it st
 
 ## Effects built from C\#
 
-A mix built at run time (a `ShaderMixinSource` from C#, or a tool such as VL) follows the same rules, so its mixin order is only one source of order among others:
+A mix built at run time (an `EffectSource` from C#, or a tool such as VL) follows the same rules, so its mixin order is only one source of order among others:
 
 - The order you add mixins never overrides a phase or `[After]`. A class with a phase runs in that phase, even if you add it first.
 - It orders the overrides of one phase, and all the overrides without a phase. So a tool that wants a class to be outermost adds it without a phase, last.
