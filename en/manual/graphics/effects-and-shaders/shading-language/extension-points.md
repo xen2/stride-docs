@@ -31,7 +31,7 @@ extend Owner.Method [(parameters)] [in Phase] [after X, Y] [replaces Z]
 
 `extend` works in a class that inherits or imports `Owner`, and it is an override: it follows the rules of this page.
 
-- **The parameters** are the ones of the first definition, with their names. You can write them again, and the compiler checks them.
+- **The parameters** are the ones of the first definition, with their names. You can write them again, and the compiler checks them. Write them when the method has several overloads, or when one is an array, a texture or a buffer.
 - **Without `in`**, it goes in the phase of the first definition, which is the innermost one for `[Around]`.
 - **A step of a `[Pipeline]`** doesn't call anything: the steps run in phase order. `next` is error [SDSL0144](../../../../diagnostics/SDSL0144.md).
 - **In `[Around]` and `[Replace]`**, `next(...)` calls the next one inward. An `extend` that doesn't call it and drops others is error [SDSL0136](../../../../diagnostics/SDSL0136.md), unless it says `replaces`.
@@ -124,7 +124,7 @@ module PositionStream2
 }
 ```
 
-An override can add a phase of its own, for a phase that the first definition doesn't have: `[Phase(Wind, After = World, Before = Offset)]`. A neighbour that doesn't exist is error [SDSL0218](../../../../diagnostics/SDSL0218.md).
+An override can add a phase of its own, for a phase that the first definition doesn't have: `[Phase(Wind, After = World, Before = Offset)]`. A neighbour that doesn't exist is error [SDSL0218](../../../../diagnostics/SDSL0218.md). The neighbour can be a phase that another class adds. The `base` call has to fit the place of the phase, as for any step ([SDSL0140](../../../../diagnostics/SDSL0140.md)), and an `extend` puts it there when the neighbour is a phase of the first definition.
 
 A phase always wins, over inheritance and over the order of the mixins: a class with a phase runs in that phase wherever it is mixed.
 

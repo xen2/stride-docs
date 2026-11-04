@@ -196,7 +196,7 @@ partial effect ShadowMapCaster
 }
 ```
 
-A rule about a method or a class that isn't in the effect does nothing, as the effect can be mixed in many ways. A phase that the method doesn't declare is error [SDSL0141](../../diagnostics/SDSL0141.md). The rules apply to `module` methods.
+A rule about a class that isn't in the effect does nothing, as the effect can be mixed in many ways. If the class is in the effect, a method it doesn't declare is error [SDSL0154](../../diagnostics/SDSL0154.md), and a phase that the method doesn't declare is error [SDSL0141](../../diagnostics/SDSL0141.md). A rule can name a phase that an override adds. The rules apply to `module` methods.
 
 A linkage rule belongs to the whole effect. It works at the top level of an effect and in an effect you mix with `mixin`. In an effect you mix with `mixin compose` it is error [SDSL0151](../../../diagnostics/SDSL0151.md).
 

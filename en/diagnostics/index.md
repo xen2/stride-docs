@@ -70,6 +70,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0151](SDSL0151.md): a linkage rule inside a composition
 - [SDSL0152](SDSL0152.md): a stream name that a class reaches twice
 - [SDSL0153](SDSL0153.md): a class in front of the name of a stream
+- [SDSL0154](SDSL0154.md): a linkage rule about a method that its class doesn't declare
 - [SDSL0155](SDSL0155.md): a matrix with one row or one column (`float1x3`, `float3x1`) is not supported yet
 - [SDSL0156](SDSL0156.md): an initializer list with the wrong number of values
 - [SDSL0157](SDSL0157.md): a texture, sampler or buffer in an initializer list
