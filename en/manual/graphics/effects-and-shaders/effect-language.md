@@ -171,7 +171,7 @@ namespace Stride.Rendering
 }
 ```
 
-The statements of the effect come first, then the ones of each layer. An assembly that references another layer comes after it, so a game comes after the plugins it uses, and layers that don't know each other are in the order of their assembly names. For one `order` target, the last layer wins.
+The statements of the effect come first, then the ones of each layer. An assembly that references another layer comes after it, also when its code uses no type of that assembly, so a game comes after the plugins it references, and layers that don't know each other are in the order of their assembly names. For one `order` target, the last layer wins.
 
 ### Linkage rules
 
@@ -196,7 +196,7 @@ partial effect ShadowMapCaster
 }
 ```
 
-A rule about a class that isn't in the effect does nothing, as the effect can be mixed in many ways. If the class is in the effect, a method it doesn't declare is error [SDSL0154](../../diagnostics/SDSL0154.md), and a phase that the method doesn't declare is error [SDSL0141](../../diagnostics/SDSL0141.md). A rule can name a phase that an override adds. The rules apply to `module` methods.
+A rule about a class that exists and isn't in the effect does nothing, as the effect can be mixed in many ways. A class that exists nowhere is error [SDSL0158](../../diagnostics/SDSL0158.md), also a class of a package the project doesn't reference. If the class is in the effect, a method it doesn't declare is error [SDSL0154](../../diagnostics/SDSL0154.md), and a phase that the method doesn't declare is error [SDSL0141](../../diagnostics/SDSL0141.md). A rule can name a phase that an override adds. The rules apply to `module` methods.
 
 A linkage rule belongs to the whole effect. It works at the top level of an effect and in an effect you mix with `mixin`. In an effect you mix with `mixin compose` it is error [SDSL0151](../../../diagnostics/SDSL0151.md).
 

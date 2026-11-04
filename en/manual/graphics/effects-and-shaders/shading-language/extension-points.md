@@ -34,7 +34,7 @@ extend Owner.Method [(parameters)] [in Phase] [after X, Y] [replaces Z]
 - **The parameters** are the ones of the first definition, with their names. You can write them again, and the compiler checks them. Write them when the method has several overloads, or when one is an array, a texture or a buffer.
 - **Without `in`**, it goes in the phase of the first definition, which is the innermost one for `[Around]`.
 - **A step of a `[Pipeline]`** doesn't call anything: the steps run in phase order. `next` is error [SDSL0144](../../../../diagnostics/SDSL0144.md).
-- **In `[Around]` and `[Replace]`**, `next(...)` calls the next one inward. An `extend` that doesn't call it and drops others is error [SDSL0136](../../../../diagnostics/SDSL0136.md), unless it says `replaces`.
+- **In `[Around]` and `[Replace]`**, `next(...)` calls the next one inward. An `extend` that doesn't call it and drops others, without saying `replaces`, is error [SDSL0136](../../../../diagnostics/SDSL0136.md) when an effect is built by the asset compiler. In a mix built at run time, the compiler writes the same text in the log, as information.
 
 `next` only means this inside `extend` and `patch`. `extend`, `patch` and `next` are not reserved words.
 

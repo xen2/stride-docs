@@ -74,6 +74,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0155](SDSL0155.md): a matrix with one row or one column (`float1x3`, `float3x1`) is not supported yet
 - [SDSL0156](SDSL0156.md): an initializer list with the wrong number of values
 - [SDSL0157](SDSL0157.md): a texture, sampler or buffer in an initializer list
+- [SDSL0158](SDSL0158.md): a linkage rule about a class that exists nowhere
 - [SDSL0160](SDSL0160.md): a call with too many or too few arguments
 - [SDSL0161](SDSL0161.md): an argument that can't be converted to its parameter type
 - [SDSL0162](SDSL0162.md): no overload can take the arguments of a call

@@ -33,6 +33,7 @@ What Stride 4.4 reported as a warning, or let through silently, is now an error 
 | [SDSL0209](../diagnostics/SDSL0209.md), [SDSL0210](../diagnostics/SDSL0210.md), [SDSL0211](../diagnostics/SDSL0211.md), [SDSL0213](../diagnostics/SDSL0213.md) | `[Pure]` rules | you fix it |
 | [SDSL0152](../diagnostics/SDSL0152.md), [SDSL0153](../diagnostics/SDSL0153.md) | a stream name that a class reaches twice, and a class in front of the name of a stream | you fix it |
 | [SDSL0215](../diagnostics/SDSL0215.md) | two structs of one name in a class | you fix it |
+| [SDSL0136](../diagnostics/SDSL0136.md) | an `extend` that drops others without saying so, in an effect built by the asset compiler. Two overrides of one `[Replace]` method become this after the upgrade, because one drops the other | you fix it: `replaces` or `next` |
 | [SDSL0216](../diagnostics/SDSL0216.md) | an override that drops others without saying so, in an effect built by the asset compiler | writes `[Replaces]` when the class inherited what it drops; otherwise you fix it: `[Replaces]` or `base` |
 | [SDSL0217](../diagnostics/SDSL0217.md) | an attribute misspelled on a class or a `cbuffer` | you fix it |
 
