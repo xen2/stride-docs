@@ -143,6 +143,9 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0306](SDSL0306.md): a replacer that does not forward the generic parameters
 - [SDSL0307](SDSL0307.md): a short name in a string, for a class in a namespace
 - [SDSL0308](SDSL0308.md): a shader that its file only declares inside an `#if` that is off
+- [SDSL0310](SDSL0310.md): an `extend effect` whose effect doesn't exist
+- [SDSL0311](SDSL0311.md): `partial effect`, which is now `effect` or `extend effect`
+- [SDSL0312](SDSL0312.md): an `extend effect` twice in one project, or in the project of the effect
 
 ## References
 

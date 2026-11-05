@@ -137,12 +137,12 @@ or
 mixin compose albedoSpecular = MaterialParameters.AlbedoSpecular;
 ```
 
-### Partial effects
+### Sub-mixins
 
 You can also break the code into sub-mixins to reuse elsewhere with the syntax below.
 
 ```cs
-partial effect MyPartialEffect
+effect MySubMixin
 {
 	mixin ComputeColorMultiply;
 	mixin compose color1 = ComputeColorStream;
@@ -150,20 +150,20 @@ partial effect MyPartialEffect
 }
  
 // to use it
-mixin MyPartialEffect;
-mixin compose myComposition = MyPartialEffect;
+mixin MySubMixin;
+mixin compose myComposition = MySubMixin;
 ```
 
-You can use the `MyPartialEffect` mixin like any other mixin in the code.
+You can use the `MySubMixin` mixin like any other mixin in the code. Before Stride 4.5, this could also be written `partial effect`, which did nothing more. It is now error [SDSL0311](../../../diagnostics/SDSL0311.md).
 
 ### Add to an effect from another project
 
-A `partial effect` with the name of an effect of another assembly adds to that effect instead of being an error. A plugin or a game can change an engine effect this way, without copying it:
+`extend effect` adds to an effect of another project. A plugin or a game can change an engine effect this way, without copying it:
 
 ```cs
 namespace Stride.Rendering
 {
-    partial effect StrideForwardShadingEffect
+    extend effect StrideForwardShadingEffect
     {
         mixin MyFogShader;
         order ShadingBase.Shading.Post: MyFogShader, EffectCompiling;
@@ -171,7 +171,11 @@ namespace Stride.Rendering
 }
 ```
 
+Write it in the namespace of the effect, in a project that references the project of the effect. If the build can't find the effect, for example because its name is misspelled, it is error [SDSL0310](../../../diagnostics/SDSL0310.md). A project can extend an effect once, and it can't extend its own effects: that is error [SDSL0312](../../../diagnostics/SDSL0312.md).
+
 The statements of the effect come first, then the ones of each layer. An assembly that references another layer comes after it, also when its code uses no type of that assembly, so a game comes after the plugins it references, and layers that don't know each other are in the order of their assembly names. For one `order` target, the last layer wins.
+
+A layer also runs when a `mixin child` of the effect is asked for, after the child.
 
 ### Linkage rules
 
@@ -188,7 +192,7 @@ Linkage rules say how an effect uses the [extension points](shading-language/ext
 Use `unbind` when an effect owns its pipeline: its overrides aren't dropped by accident, the effect says they aren't part of it. The shadow caster of the engine has no pixel shading:
 
 ```cs
-partial effect ShadowMapCaster
+effect ShadowMapCaster
 {
     mixin ShadowMapCasterNoPixelShader;
     unbind ShaderBase.PSMain.Shade;
@@ -203,30 +207,6 @@ A linkage rule belongs to the whole effect. It works at the top level of an effe
 `[Link]` is a different thing: it ties a member to a parameter key, and has nothing to do with linkage rules.
 
 `order`, `bind`, `unbind` and `phase` are not reserved words: a variable can have these names.
-
-### Features, optional slots and variants
-
-Three statements say what an `if` means, so that tools can list the permutations of an effect without running it:
-
-```cs
-effect MyEffect
-{
-    using params MyKeys;
-
-    // A bool parameter
-    feature MyKeys.UseFog { mixin Fog; } else { mixin NoFog; }
-
-    // A parameter that C# fills or not. Its value is data, whether it has one is a choice
-    optional MyKeys.Extension { mixin compose extension = MyKeys.Extension; }
-
-    // The effect with what the block adds
-    variant DepthOnly { unbind ShaderBase.PSMain.Shade; }
-}
-```
-
-`feature` and `optional` are the structural axes of the effect. `ShaderMixinManager.GetStructuralAxes` returns them, and the generated class carries them as `[EffectAxes]`.
-
-A `variant` is compiled under the name `MyEffect.DepthOnly`. Unlike `mixin child`, which stops at the place it is written, a variant has all the statements of the effect, wherever it is written. It goes at the top of the effect, not inside an `if`.
 
 ## See also
 
