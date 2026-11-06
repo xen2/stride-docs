@@ -283,6 +283,61 @@ Rules:
 - A cbuffer name is `[PushConstant]` everywhere or nowhere ([SDSL0132](../../../../diagnostics/SDSL0132.md)). The block is named `PushConstants`, so a cbuffer without `[PushConstant]` can't have that name ([SDSL0167](../../../../diagnostics/SDSL0167.md)).
 - On Direct3D 11, the block uses the last constant buffer register (`b13`), so the effect can have 13 other cbuffers at most ([SDSL0133](../../../../diagnostics/SDSL0133.md)).
 
+## Texture arrays
+
+An array of textures in an `rgroup` takes one texture slot per element. The shader reads an element with an index that is the same for the whole draw, for example a push constant:
+
+```cs
+shader MyLayeredMaterial
+{
+    import ShaderBase;
+    import Texturing;
+
+    static const int LayerCount = 8;
+
+    rgroup PerMaterial
+    {
+        module Texture2D Layers[LayerCount];
+    }
+
+    [PushConstant] cbuffer PerDraw
+    {
+        module uint LayerIndex;
+    };
+
+    float4 ReadLayer(Texture2D layer, float2 uv)
+    {
+        return layer.Sample(LinearSampler, uv);
+    }
+
+    float4 Read(float2 uv)
+    {
+        // An element can go to a method
+        return Layers[LayerIndex].Sample(LinearSampler, uv) + ReadLayer(Layers[0], uv);
+    }
+};
+```
+
+In C#, the array has one key, an `ObjectParameterKey<Texture>`. Set all its elements at once:
+
+```cs
+parameters.Set(MyLayeredMaterialKeys.Layers, new Texture[] { rock, grass, sand, snow, mud, moss, gravel, ice });
+```
+
+`GraphicsDeviceFeatures.MaxTextureArraySize` is the largest array the device can use.
+
+Rules:
+
+- A texture array is in an `rgroup` ([SDSL0260](../../../../diagnostics/SDSL0260.md)).
+- Its elements are read-only textures: `Texture1D`, `Texture2D`, `Texture3D`, `TextureCube` and their `Array` forms. Arrays of samplers, buffers, read-write textures or multisampled textures are not supported yet ([SDSL0261](../../../../diagnostics/SDSL0261.md)).
+- It has one dimension ([SDSL0262](../../../../diagnostics/SDSL0262.md)), and its size is a literal or a `static const` value. `Layers[]` without a size is kept for bindless textures ([SDSL0263](../../../../diagnostics/SDSL0263.md)), and a generic parameter can't give the size yet ([SDSL0264](../../../../diagnostics/SDSL0264.md)).
+- A constant index must be inside the array ([SDSL0265](../../../../diagnostics/SDSL0265.md)).
+- A method takes one element as a texture parameter, not the whole array ([SDSL0266](../../../../diagnostics/SDSL0266.md)).
+- The index is the same for the whole draw: a literal, a `static const` value, a `cbuffer` member or a push constant. Nothing checks it yet, and an index that changes inside a draw gives wrong results on some GPUs. `NonUniformResourceIndex` is not supported yet ([SDSL0267](../../../../diagnostics/SDSL0267.md)).
+- On Direct3D 11, the index must be a constant once the methods are inlined: a literal, a `static const` value, or a generic parameter with one permutation per value ([SDSL0268](../../../../diagnostics/SDSL0268.md)). Direct3D 11 has 128 texture slots per stage.
+- In C#, every element is set: `Set` throws for a `null` element, and an array shorter than the one of the shader is an error when the effect uses the parameters. A longer array keeps its first elements.
+- On Vulkan, a texture array is in a descriptor set of its own, written once per command list and not for each draw. So an element must not be a texture that the same frame renders to (a render target or a depth buffer).
+
 ## Shader, module, or module member?
 
 | You want to write | Use |

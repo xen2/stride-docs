@@ -148,6 +148,15 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0254](SDSL0254.md): `[Drops]` or `[Unbind]` without `Mixins` and `Phases`, or with a name of the wrong kind
 - [SDSL0255](SDSL0255.md): a name in quotes, kept for weak names
 - [SDSL0256](SDSL0256.md): a block of an effect written the wrong way
+- [SDSL0260](SDSL0260.md): a texture array outside an `rgroup`
+- [SDSL0261](SDSL0261.md): an array of samplers, buffers, read-write or multisampled textures
+- [SDSL0262](SDSL0262.md): an array of arrays of textures
+- [SDSL0263](SDSL0263.md): a texture array without a size, kept for bindless textures
+- [SDSL0264](SDSL0264.md): a texture array whose size is not a constant
+- [SDSL0265](SDSL0265.md): a constant index outside a texture array
+- [SDSL0266](SDSL0266.md): a whole texture array as a method parameter
+- [SDSL0267](SDSL0267.md): `NonUniformResourceIndex`
+- [SDSL0268](SDSL0268.md): on Direct3D 11, a texture array index that is not a constant
 - [SDSL0300](SDSL0300.md): a short name that matches two classes
 - [SDSL0301](SDSL0301.md): a shader declared twice
 - [SDSL0302](SDSL0302.md): an effect declared twice
