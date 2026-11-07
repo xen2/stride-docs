@@ -299,6 +299,10 @@ items:
                 href: graphics/effects-and-shaders/shading-language/quick-tour.md
               - name: Shaders and modules
                 href: graphics/effects-and-shaders/shading-language/shaders-and-modules.md
+              - name: Enums
+                href: graphics/effects-and-shaders/shading-language/enums.md
+              - name: Data shared with C#
+                href: graphics/effects-and-shaders/shading-language/shared-data.md
               - name: Namespaces
                 href: graphics/effects-and-shaders/shading-language/namespaces.md
               - name: Inheritance and overrides

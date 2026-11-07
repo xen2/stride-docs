@@ -276,7 +276,7 @@ All the `[PushConstant] cbuffer` declarations of an effect, whatever their names
 
 Rules:
 
-- A member is an `int`, `uint` or `float`, or a 2- or 4-component vector of them (for example `uint2` or `float4`). Other types are an error ([SDSL0129](../../../../diagnostics/SDSL0129.md)).
+- A member is an `int`, `uint`, `float` or [enum](enums.md), or a 2- or 4-component vector of `int`, `uint` or `float` (for example `uint2` or `float4`). Other types are an error ([SDSL0129](../../../../diagnostics/SDSL0129.md)).
 - The block exists once per effect, so its members are `module` members, or the class is root-only ([SDSL0130](../../../../diagnostics/SDSL0130.md)).
 - The members are packed one after the other, with no padding: a 2-component vector must start at a multiple of 8 bytes, and a 4-component vector at a multiple of 16 bytes ([SDSL0134](../../../../diagnostics/SDSL0134.md)). Put the vectors first, or add a member before them. This way the C# struct has the same layout on every graphics API.
 - The block is 32 bytes at most ([SDSL0131](../../../../diagnostics/SDSL0131.md)).

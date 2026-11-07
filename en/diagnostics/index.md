@@ -157,6 +157,28 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0266](SDSL0266.md): a whole texture array as a method parameter
 - [SDSL0267](SDSL0267.md): `NonUniformResourceIndex`
 - [SDSL0268](SDSL0268.md): on Direct3D 11, a texture array index that is not a constant
+- [SDSL0270](SDSL0270.md): a plain `enum`, which is written `enum class`
+- [SDSL0271](SDSL0271.md): an enum without an underlying type, or with one that is not `int` or `uint`
+- [SDSL0272](SDSL0272.md): a value of an enum that is not an integer literal in the range of its type
+- [SDSL0273](SDSL0273.md): two values of an enum with one number
+- [SDSL0274](SDSL0274.md): a value, an enum or a struct declared twice
+- [SDSL0275](SDSL0275.md): a value of an enum that becomes a number, or a number that becomes a value of an enum, without a cast
+- [SDSL0276](SDSL0276.md): an operator other than `==` and `!=` on an enum
+- [SDSL0277](SDSL0277.md): a cast between two enums, or between an enum and a type that is not a scalar number
+- [SDSL0278](SDSL0278.md): `X::A`, which is written `X.A`
+- [SDSL0279](SDSL0279.md): `X.A` where `X` is both an enum and a variable
+- [SDSL0280](SDSL0280.md): a value that the enum doesn't have
+- [SDSL0281](SDSL0281.md): a case that is not a value of the enum of the `switch`
+- [SDSL0282](SDSL0282.md): a `switch` on an enum with no `default` that misses values
+- [SDSL0283](SDSL0283.md): a generic parameter of an enum type
+- [SDSL0284](SDSL0284.md): an enum outside a shader
+- [SDSL0285](SDSL0285.md): an enum as the element of a typed buffer or a texture
+- [SDSL0286](SDSL0286.md): a wrong argument of `[CSharp]`, or another attribute on an enum or a struct
+- [SDSL0287](SDSL0287.md): `[CSharp("Full.Name")]` that names no C# enum
+- [SDSL0288](SDSL0288.md): an enum that doesn't match the C# enum it maps to
+- [SDSL0289](SDSL0289.md): a field of a `[CSharp]` struct whose type has no C# twin with the same layout
+- [SDSL0290](SDSL0290.md): a field of a `[CSharp]` struct of an enum or a struct that has no C# type
+- [SDSL0291](SDSL0291.md): a `[CSharp]` struct that a cbuffer lays out differently from C#
 - [SDSL0300](SDSL0300.md): a short name that matches two classes
 - [SDSL0301](SDSL0301.md): a shader declared twice
 - [SDSL0302](SDSL0302.md): an effect declared twice
