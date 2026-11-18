@@ -79,7 +79,7 @@ shader ComputeColorRain : ComputeColor
 };
 ```
 
-The names of an imported module are visible without a prefix (`Wetness`, `Hash`, `streams.TexCoord`), also in shaders that inherit `ComputeColorRain`.
+The names of an imported module are visible without a prefix (`Wetness`, `Hash`, `streams.TexCoord`), also in shaders that inherit `ComputeColorRain`. If two unrelated classes declare a method with one name and the same parameters, a call without a prefix is error [SDSL0248](../../../../diagnostics/SDSL0248.md): write `MyNoise.Hash(...)` to say which one.
 
 An import doesn't copy the module. If two shaders of the same effect import `MyWeather`, they read the same `Wetness`.
 
@@ -166,7 +166,7 @@ shader MyGrayscale
 };
 ```
 
-In a shader used in a composition (a material node, a light, a material feature), `module override` is required: a plain `override` of a module method gives a warning that says to write `module override`, and an error when an effect uses the shader in a composition. In a shader mixed at the root, it's the same method either way, but `module override` says what it does.
+In a shader used in a composition (a material node, a light, a material feature), `module override` is required: a plain `override` of a module method is an error that says to write `module override`. In a shader mixed at the root, it's the same method either way, but `module override` says what it does.
 
 ## Rules
 
@@ -176,7 +176,7 @@ Module code (a module, or the `module` members and methods of a shader) exists o
 - An override must be the same kind as the method it overrides: `module override` for a module method, a plain `override` for an instance method. Instance code can't call a module method through `base`.
 - A `module compose` slot is one slot for the whole effect. It must be filled at the root of the effect.
 
-The compiler checks these rules when it compiles the shader, and reports warnings ([SDSL0204](../../../../diagnostics/SDSL0204.md) to [SDSL0208](../../../../diagnostics/SDSL0208.md)) that say the fix. When an effect uses the shader in a composition anyway, building the effect fails:
+The compiler checks these rules when it compiles the shader, and reports errors ([SDSL0204](../../../../diagnostics/SDSL0204.md) to [SDSL0208](../../../../diagnostics/SDSL0208.md)) that say the fix. When an effect uses the shader in a composition anyway, building the effect fails:
 
 ```
 Module code `MyBlur.Shading` reads `Radius`, an instance member of `MyBlur`. `MyBlur` is used in a composition (`ShadingColor0`), where each instance has its own `Radius`. Mark `Radius` `module`, or mix `MyBlur` at the root.
@@ -205,7 +205,7 @@ shader MyWindFeature
 };
 ```
 
-Without `[Root]`, the compiler warns that the module code reads `Strength`, an instance member ([SDSL0204](../../../../diagnostics/SDSL0204.md)). With `[Root]`, it knows that the shader is the effect's only instance.
+Without `[Root]`, the compiler reports that the module code reads `Strength`, an instance member ([SDSL0204](../../../../diagnostics/SDSL0204.md)). With `[Root]`, it knows that the shader is the effect's only instance.
 
 A shader that inherits or imports a `[Root]` class directly is root-only; importing a module that imports it doesn't count.
 
@@ -303,6 +303,7 @@ In an [effect](../effect-language.md) (`.sdfx`) or a C# @'Stride.Shaders.ShaderM
 ## See also
 
 * [Quick tour](quick-tour.md)
+* [Namespaces](namespaces.md)
 * [Inheritance and overrides](shader-classes-mixins-and-inheritance.md)
 * [Composition](composition.md)
 * [Streams and stage input/output](automatic-shader-stage-input-output.md)

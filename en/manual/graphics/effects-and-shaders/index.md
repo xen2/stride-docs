@@ -7,7 +7,7 @@ Stride uses a programmable shading pipeline. You can write [custom shaders](cust
 Use:
 
 ```cs
-var myEffect = EffectSystem.LoadEffect("MyEffect").WaitForResult();
+var myEffect = EffectSystem.LoadEffect(MyEffectKeys.EffectName).WaitForResult();
 ```
 
 You can then bind the effect as [pipeline state](../low-level-api/pipeline-state.md).
@@ -36,7 +36,9 @@ Each shader is compiled once, then effects mix and compose the compiled shaders 
 * [Shading language (SDSL)](shading-language/index.md)
     - [Quick tour](shading-language/quick-tour.md)
     - [Shaders and modules](shading-language/shaders-and-modules.md)
+    - [Namespaces](shading-language/namespaces.md)
     - [Inheritance and overrides](shading-language/shader-classes-mixins-and-inheritance.md)
+    - [Extension points](shading-language/extension-points.md)
     - [Composition](shading-language/composition.md)
     - [Streams and stage input/output](shading-language/automatic-shader-stage-input-output.md)
     - [Shader stages](shading-language/shader-stages.md)

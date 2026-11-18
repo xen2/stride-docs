@@ -257,7 +257,7 @@ We'll copy @'Stride.Particles.Materials.ParticleMaterialComputeColor' into `Part
 
   ```cs
         [DataMemberIgnore]
-        protected override string EffectName { get; set; } = "ParticleCustomEffect";
+        protected override string EffectName { get; set; } = ParticleCustomEffectKeys.EffectName;
 ```
 
 The base class automatically tries to load the effect specified with `EffectName`. We give it the name of the effect we crated earlier.

@@ -43,7 +43,7 @@ The compiler checks these rules when it compiles the shader, with a message that
 
 - a method that implements an abstract method without `override` is error [SDSL0114](../../../../diagnostics/SDSL0114.md);
 - an `override` with other parameters, or another return type, than the inherited method is error [SDSL0176](../../../../diagnostics/SDSL0176.md) or [SDSL0175](../../../../diagnostics/SDSL0175.md);
-- an `override` of a method that no parent declares is warning [SDSL0200](../../../../diagnostics/SDSL0200.md), and a `base` call with no inherited method is warning [SDSL0201](../../../../diagnostics/SDSL0201.md).
+- an `override` of a method that no parent declares is error [SDSL0200](../../../../diagnostics/SDSL0200.md), and a `base` call with no inherited method is error [SDSL0201](../../../../diagnostics/SDSL0201.md).
 
 Parents that are modules are imported, not inherited: see [Shaders and modules](shaders-and-modules.md). Overrides of module methods are written `module override`.
 
@@ -126,6 +126,8 @@ shader MixBA
 
 The same order applies when an [effect](../effect-language.md) mixes several shaders: `mixin ShaderA; mixin ShaderB;` gives the order of `MixAB`.
 
+For a `module` method, the first definition can say how its overrides combine, so that their order no longer depends on the order of the mixins, and an override can be written `extend`: see [Extension points](extension-points.md).
+
 ## Keywords
 
 SDSL uses the keywords of HLSL, and adds these:
@@ -148,7 +150,7 @@ SDSL uses the keywords of HLSL, and adds these:
 
 Like in HLSL, members can have annotations. The most useful ones are:
 
-- `[Color]` on a `float3` or `float4` member: the parameter key has the type `Color3` or `Color4` instead of `Vector3` or `Vector4`, and Game Studio shows a color picker. On a member of another type, it is warning [SDSL0203](../../../../diagnostics/SDSL0203.md).
+- `[Color]` on a `float3` or `float4` member: the parameter key has the type `Color3` or `Color4` instead of `Vector3` or `Vector4`, and Game Studio shows a color picker. On a member of another type, it is error [SDSL0203](../../../../diagnostics/SDSL0203.md).
 - `[Link("...")]` sets the name of the parameter key used to set this value.
 - `[Map("...")]` uses an existing parameter key for this value. No new key is created.
 
@@ -168,6 +170,7 @@ shader MyAnnotatedShader
 ## See also
 
 * [Shaders and modules](shaders-and-modules.md)
+* [Extension points](extension-points.md)
 * [Composition](composition.md)
 * [Streams and stage input/output](automatic-shader-stage-input-output.md)
 * [Shader stages](shader-stages.md)

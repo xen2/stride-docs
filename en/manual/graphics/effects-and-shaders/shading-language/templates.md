@@ -51,7 +51,7 @@ shader ComputeColorTextureSampler<LinkType TTextureName, Semantic TStream, LinkT
 
 A module used with different generic values gives one module per set of values that it really uses.
 
-A class that inherits or imports a generic class gives one value per generic parameter. Too few values is error [SDSL0117](../../../../diagnostics/SDSL0117.md), too many is warning [SDSL0202](../../../../diagnostics/SDSL0202.md).
+A class that inherits or imports a generic class gives one value per generic parameter. Too few values is error [SDSL0117](../../../../diagnostics/SDSL0117.md), too many is error [SDSL0202](../../../../diagnostics/SDSL0202.md).
 
 ## See also
 
