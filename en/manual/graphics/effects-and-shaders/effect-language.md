@@ -8,7 +8,7 @@ You can create a shader at runtime with @'Stride.Shaders.ShaderSource' objects. 
 - @'Stride.Shaders.ShaderMixinSource' mix several @'Stride.Shaders.ShaderSource', set preprocessor values, define compositions
 - @'Stride.Shaders.ShaderArraySource' are used for arrays of compositions
 
-This method produces shaders at runtime. However, many platforms don't support HLSL and have no ability to compile shaders at runtime. Additionally, the approach doesn't benefit from the reusability of mixins.
+This method produces shaders at runtime: a shader that isn't compiled yet stalls the frame that first needs it (see [Compile shaders](compile-shaders.md)). Additionally, the approach doesn't benefit from the reusability of mixins.
 
 ## Stride Effects (SDFX)
 
@@ -105,7 +105,7 @@ To add a composition, assign the composition variable to your mixin with the syn
 
 ```cs
 // albedoSpecular is the name of the composition variable in the mixin
-mixin compose albedoSpecular = ComputeColorTexture;
+mixin compose albedoSpecular = ComputeColorFixed;
  
 or
  

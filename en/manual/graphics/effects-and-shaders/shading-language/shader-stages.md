@@ -44,6 +44,23 @@ override stage void PSMain()
 }
 ```
 
+### Primitive ID
+
+A pixel shader can read the index of the primitive it draws, with the semantic `SV_PrimitiveID`:
+
+```cs
+stream uint PrimitiveId : SV_PrimitiveID;
+
+override stage void PSMain()
+{
+    streams.ColorTarget = ColorOf(streams.PrimitiveId);
+}
+```
+
+Without a geometry shader, the GPU gives the value. With a geometry shader, the geometry shader must write it (`streams.PrimitiveId = ...;`), or the effect doesn't compile.
+
+On Vulkan, an effect with no tessellation shader needs geometry shader support on the device for this. macOS and iOS (MoltenVK) don't have it.
+
 ## Geometry shader
 
 An example of geometry shader:
@@ -55,7 +72,7 @@ void GSMain(triangle Input input[3], inout PointStream<Output> pointStream)
     ...
     // fill the streams object
     streams = input[0];
- 	...
+     ...
  
     // always append streams
     pointStream.Append(streams);

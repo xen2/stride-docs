@@ -3,17 +3,15 @@
 Shader templating is available in SDSL. Unlike many templating systems, sdsl requires strong typed templates. The available types are:
 
 - value types from HLSL (float, int, float2, float3, float4)
-- 2D textures
-- sampler states
 - semantics (used to replace semantics on variables)
 - link types (used to replace link annotations)
 
-An instantiated shader behaves the same way as any other shader. The value, texture and sampler template parameters are accessible like any other variable. However, it's impossible to modify their value; attempting to do so results in a compilation error. If a template variable is incorrectly used (eg using a sampler as a semantic), it should result in a compilation error. However, the behavior is officially unknown.
+An instantiated shader behaves the same way as any other shader. The value template parameters are accessible like any other variable. However, it's impossible to modify their value; attempting to do so results in a compilation error. If a template variable is incorrectly used (eg using a sampler as a semantic), it should result in a compilation error. However, the behavior is officially unknown.
 
 **Code:** Templating
 
 ```cs
-shader TemplateShader<float speed, Texture2D myTexture, SamplerState mySampler, Semantic mySemantic, LinkType myLink>
+shader TemplateShader<float speed, Semantic mySemantic, LinkType myLink>
 {
     [Color]
     [Link("myLink")]
@@ -23,13 +21,16 @@ shader TemplateShader<float speed, Texture2D myTexture, SamplerState mySampler, 
  
     float4 GetValue()
     {
-        return speed * myColor * myTexture.Sample(mySampler, streams.texcoord);
+        return speed * myColor * float4(streams.texcoord, 0, 1);
     }
 };
  
 // To instantiate the shader, use:
-TemplateShader<1.0f, Texturing.Texture0, Texturing.Sampler0, TEXCOORD0, MyColorLink>
+TemplateShader<1.0f, TEXCOORD0, MyColorLink>
 ```
+
+> [!NOTE]
+> Texture and sampler template parameters (`Texture2D`, `SamplerState`, ...) are not supported since Stride 4.4, and the compiler reports them with [SDSL0118](../../../../diagnostics/SDSL0118.md). To choose a texture or a sampler by name, use a `LinkType` parameter.
 
 ## See also
 

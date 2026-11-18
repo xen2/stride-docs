@@ -29,7 +29,7 @@ The **red particle system** has a very simple customization. Since the [material
 First, create a shader (`ComputeColorRed.sdsl`) with a derived class for `ComputeColor`:
 
   ```cs
-class ComputeColorRed : ComputeColor
+shader ComputeColorRed : ComputeColor
 {
     override float4 Compute()
     {
@@ -53,7 +53,7 @@ Once the shader is loaded, you can access it in the **Property grid** under the 
 The particles are red. With Game Studio running, edit and save `ComputeColorRed.sdsl` to make them yellow.
 
   ```cs
-class ComputeColorRed : ComputeColor
+shader ComputeColorRed : ComputeColor
 {
     override float4 Compute()
     {
@@ -71,7 +71,7 @@ For the next shader we'll use texture coordinates expose arbitrary values to the
 Check `ComputeColorRadial.sdsl`.
 
   ```cs
-class ComputeColorRadial<float4 ColorCenter, float4 ColorEdge> : ComputeColor, Texturing
+shader ComputeColorRadial<float4 ColorCenter, float4 ColorEdge> : ComputeColor, Texturing
 {
     override float4 Compute()
     {
@@ -168,7 +168,7 @@ Let's look at `ParticleCustomShader.sdsl`:
 
   ```cs
 
-class ParticleCustomShader : ParticleBase
+shader ParticleCustomShader : ParticleBase
 {
     // This shader can be set by the user, and it's a binary tree made up from smaller shaders
     compose ComputeColor  baseColor;

@@ -22,13 +22,11 @@ Shaders are authored in the [Stride's shading language](shading-language/index.m
 
 [Effects](effect-language.md) in Stride use C#-like syntax to further combine shaders. They provide conditional composition of shaders to generate effect permutations.
 
-As some platforms can't compile shaders at runtime (eg iOS, Android, etc), effect permutation files (`.sdeffectlog`) are used to enumerate all permutations ahead of time.
+Games can compile shaders at runtime on every platform, iOS and Android included, but a new permutation then stalls the frame that first needs it. To compile them ahead of time, effect permutation files (`.sdeffectlog`) enumerate the permutations a game uses.
 
 ## Target everything
 
-Stride shaders are converted automatically to the target graphics platform — either plain `HLSL` for Direct3D or `SPIR-V` for Vulkan platforms.
-
-For mobile platforms, shaders are optimized by a GLSL optimizer to improve performance.
+Each shader is compiled once, then effects mix and compose the compiled shaders into SPIR-V. Stride converts it automatically to the target graphics platform: `SPIR-V` for Vulkan, `DXIL` for Direct3D 12, and `HLSL` for Direct3D 11. On macOS and iOS, Vulkan runs on Metal through MoltenVK.
 
 ## In this section
 
