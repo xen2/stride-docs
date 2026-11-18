@@ -25,7 +25,7 @@ The `Stride.Core.CompilerServices` is linked to `Stride.Core`, the diagnostic An
 
 ## Shader compiler (SDSL)
 
-The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.sdsl`) or builds an effect: in the asset build, in Game Studio and at run time. Codes from `SDSL0200` are warnings, except `SDSL0247`, which is an error. With a warning, the class still compiles, but it most likely doesn't do what you expect. To make them fail the build (they will be errors in a later release), set the MSBuild property `StrideShaderWarningsAsErrors` to `true` in your project.
+The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.sdsl`) or builds an effect: in the asset build, in Game Studio and at run time. Most codes are errors. A few are warnings: the class still compiles, but it most likely doesn't do what you expect. They are `SDSL0219`, `SDSL0220`, `SDSL0232` and `SDSL0242` to `SDSL0244`, which are about valid HLSL, and `SDSL0245`. To make them fail the build, set the MSBuild property `StrideShaderWarningsAsErrors` to `true` in your project.
 
 - [SDSL0045](SDSL0045.md): `stage`, the old name of `module`
 - [SDSL0046](SDSL0046.md): `mixin clone` in an effect
@@ -52,11 +52,31 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0132](SDSL0132.md): cbuffer name with and without `[PushConstant]`
 - [SDSL0133](SDSL0133.md): no constant buffer register left for push constants on Direct3D 11
 - [SDSL0134](SDSL0134.md): misaligned vector in the push constants
+- [SDSL0135](SDSL0135.md): a kind or a phase of an extension point written the wrong way
+- [SDSL0136](SDSL0136.md): an `extend` that drops the ones before it
+- [SDSL0137](SDSL0137.md): two overrides of one phase that nothing orders
+- [SDSL0138](SDSL0138.md): an order that can't be followed
+- [SDSL0139](SDSL0139.md): `[Collect]` is reserved
+- [SDSL0140](SDSL0140.md): the place of `base` does not fit the phase of a pipeline step
+- [SDSL0141](SDSL0141.md): a phase the method does not declare
+- [SDSL0142](SDSL0142.md): a kind on an override
+- [SDSL0143](SDSL0143.md): `extend` or `patch` of the wrong method
+- [SDSL0144](SDSL0144.md): `next` in a pipeline step
 - [SDSL0145](SDSL0145.md): a written swizzle that names an element twice
+- [SDSL0146](SDSL0146.md): classes that inherit, import or use each other in a cycle
+- [SDSL0147](SDSL0147.md): a preprocessor condition that reads a generic parameter
+- [SDSL0148](SDSL0148.md): two patches of one method that nothing orders
+- [SDSL0149](SDSL0149.md): a macro set inside a composition
 - [SDSL0150](SDSL0150.md): a member of a buffer, such as `.Length` (buffers have `GetDimensions` instead)
+- [SDSL0151](SDSL0151.md): a block inside a composition
+- [SDSL0152](SDSL0152.md): a stream name that a class reaches twice
+- [SDSL0153](SDSL0153.md): a class in front of the name of a stream
+- [SDSL0154](SDSL0154.md): a block about a method that its class doesn't have, or doesn't contribute to
 - [SDSL0155](SDSL0155.md): a matrix with one row or one column (`float1x3`, `float3x1`) is not supported yet
 - [SDSL0156](SDSL0156.md): an initializer list with the wrong number of values
 - [SDSL0157](SDSL0157.md): a texture, sampler or buffer in an initializer list
+- [SDSL0158](SDSL0158.md): a block about a class that exists nowhere
+- [SDSL0159](SDSL0159.md): `streams.name` with no stream of that name
 - [SDSL0160](SDSL0160.md): a call with too many or too few arguments
 - [SDSL0161](SDSL0161.md): an argument that can't be converted to its parameter type
 - [SDSL0162](SDSL0162.md): no overload can take the arguments of a call
@@ -106,7 +126,9 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0213](SDSL0213.md): pixel shader operation in a `[Pure]` module
 - [SDSL0214](SDSL0214.md): `partial` on a shader or module
 - [SDSL0215](SDSL0215.md): two structs with the same name
+- [SDSL0216](SDSL0216.md): an override that drops the ones before it
 - [SDSL0217](SDSL0217.md): a misspelled attribute on a shader, module or cbuffer
+- [SDSL0218](SDSL0218.md): a phase added next to one that doesn't exist
 - [SDSL0219](SDSL0219.md): comma expression that drops values (a vector type is missing)
 - [SDSL0220](SDSL0220.md): `register(...)` or `packoffset(...)` is ignored
 - [SDSL0232](SDSL0232.md): a comparison without parentheses inside `&`, `|` or `^`
@@ -114,7 +136,29 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0242](SDSL0242.md): `&` without parentheses inside `|`
 - [SDSL0243](SDSL0243.md): `&&` without parentheses inside `||`
 - [SDSL0244](SDSL0244.md): `+` or `-` without parentheses inside `<<` or `>>`
+- [SDSL0245](SDSL0245.md): the file name is not the name of the class
+- [SDSL0246](SDSL0246.md): an override of a module method that is not an extension point
 - [SDSL0247](SDSL0247.md): a module in a composition
+- [SDSL0248](SDSL0248.md): a bare call that two unrelated classes could answer
+- [SDSL0249](SDSL0249.md): `[Pipeline]`, `[Replace]` or `[Around]`, which are keywords
+- [SDSL0250](SDSL0250.md): a kind written the wrong way
+- [SDSL0251](SDSL0251.md): `[After]`, `[Replaces]` on a method, or a linkage rule of an earlier preview, which the message replaces
+- [SDSL0252](SDSL0252.md): a phase added without a prefix
+- [SDSL0253](SDSL0253.md): a phase added with the prefix `Stride.` outside the engine
+- [SDSL0254](SDSL0254.md): `[Drops]` or `[Unbind]` without `Mixins` and `Phases`, or with a name of the wrong kind
+- [SDSL0255](SDSL0255.md): a name in quotes, kept for weak names
+- [SDSL0256](SDSL0256.md): a block of an effect written the wrong way
+- [SDSL0300](SDSL0300.md): a short name that matches two classes
+- [SDSL0301](SDSL0301.md): a shader declared twice
+- [SDSL0302](SDSL0302.md): an effect declared twice
+- [SDSL0303](SDSL0303.md): `[Replaces]` names a class that does not exist or is not visible
+- [SDSL0304](SDSL0304.md): two replacers of one class
+- [SDSL0305](SDSL0305.md): a replacer that does not inherit the original, is another kind, or is `[Root]`
+- [SDSL0306](SDSL0306.md): a replacer that does not forward the generic parameters
+- [SDSL0307](SDSL0307.md): a short name in a string, for a class in a namespace
+- [SDSL0310](SDSL0310.md): an `extend effect` whose effect doesn't exist
+- [SDSL0311](SDSL0311.md): `partial effect`, which is now `effect` or `extend effect`
+- [SDSL0312](SDSL0312.md): an `extend effect` twice in one project, or in the project of the effect
 
 ## References
 
