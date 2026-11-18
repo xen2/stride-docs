@@ -290,27 +290,33 @@ items:
       - name: Effects and shaders
         href: graphics/effects-and-shaders/index.md
         items:
-          - name: Effect language
-            href: graphics/effects-and-shaders/effect-language.md
-          - name: Shading language
+          - name: Custom shaders
+            href: graphics/effects-and-shaders/custom-shaders.md
+          - name: Shading language (SDSL)
             href: graphics/effects-and-shaders/shading-language/index.md
             items:
-              - name: Classes, mixins and inheritance
+              - name: Quick tour
+                href: graphics/effects-and-shaders/shading-language/quick-tour.md
+              - name: Shaders and modules
+                href: graphics/effects-and-shaders/shading-language/shaders-and-modules.md
+              - name: Inheritance and overrides
                 href: graphics/effects-and-shaders/shading-language/shader-classes-mixins-and-inheritance.md
               - name: Composition
                 href: graphics/effects-and-shaders/shading-language/composition.md
-              - name: Templates
-                href: graphics/effects-and-shaders/shading-language/templates.md
-              - name: Automatic shader stage input/output
+              - name: Streams and stage input/output
                 href: graphics/effects-and-shaders/shading-language/automatic-shader-stage-input-output.md
               - name: Shader stages
                 href: graphics/effects-and-shaders/shading-language/shader-stages.md
-          - name: Custom shaders
-            href: graphics/effects-and-shaders/custom-shaders.md
-          - name: Shader development with Visual Studio Code
-            href: graphics/effects-and-shaders/shader-development-vscode.md
-          - name: Compile shaders
-            href: graphics/effects-and-shaders/compile-shaders.md
+              - name: Generics
+                href: graphics/effects-and-shaders/shading-language/templates.md
+          - name: Effects (SDFX)
+            href: graphics/effects-and-shaders/effect-language.md
+          - name: Tools
+            items:
+              - name: Shader development with Visual Studio Code
+                href: graphics/effects-and-shaders/shader-development-vscode.md
+              - name: Compile shaders
+                href: graphics/effects-and-shaders/compile-shaders.md
       - name: Low-level API
         href: graphics/low-level-api/index.md
         items:

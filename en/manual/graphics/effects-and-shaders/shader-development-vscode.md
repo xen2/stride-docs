@@ -5,7 +5,7 @@
 
 The **Stride Shader Tools** extension for Visual Studio Code provides language server features for SDSL shader development with intelligent code completion and navigation.
 
-For information on the SDSL language itself, see [Shading language](shading-language/index.md). For using shaders in materials, see [Custom shaders](custom-shaders.md).
+For information on the SDSL language itself, see [Shading language (SDSL)](shading-language/index.md). For using shaders in materials, see [Custom shaders](custom-shaders.md).
 
 ## Features
 
@@ -77,12 +77,17 @@ The extension shows available streams based on:
 * Built-in Stride streams
 
 ```cs
-shader MyVertexShader : ShaderBase, Transformation
+shader MyVertexShader
 {
-    stage void VSMain()
+    import ShaderBase;
+    import Transformation;
+    import PositionStream4;
+
+    module override void VSMain()
     {
         // Type 'streams.' to see all available streams
         streams.Position = mul(streams.Position, World);
+        base.VSMain();
     }
 }
 ```
@@ -92,13 +97,15 @@ shader MyVertexShader : ShaderBase, Transformation
 After typing `:` in shader input/output declarations, the extension provides completions for valid semantics:
 
 ```cs
-shader MyShader : ShaderBase
+shader MyShader
 {
-    stage stream float4 Position : SV_Position;
-    //                              ^ Get completions for all valid semantics
+    import ShaderBase;
 
-    stage stream float2 TexCoord : TEXCOORD0;
-    //                              ^ Hover for documentation
+    stream float4 MyColor : COLOR;
+    //                      ^ Get completions for all valid semantics
+
+    stream float2 MyCoord : TEXCOORD1;
+    //                      ^ Hover for documentation
 }
 ```
 
@@ -164,7 +171,7 @@ Click any shader in the tree to open its source file.
 The **Member Explorer** panel lists all methods and variables available in your shader, including inherited members. Members are grouped by:
 
 * **Methods** - All callable methods (including overridden and inherited)
-* **Variables** - Stage and stream variables
+* **Variables** - Module and stream variables
 * **Compositions** - Composition declarations
 
 Each entry shows:
@@ -233,14 +240,14 @@ Before writing a shader:
 
 This prevents duplicate work and helps you leverage existing functionality.
 
-### Use static calls instead of includes
+### Use modules instead of includes
 
-SDSL allows calling static functions from other shaders without `#include`:
+Put shared functions in a [module](shading-language/shaders-and-modules.md), and call them by name without `#include`:
 
 ```cs
-shader Utils
+module Utils
 {
-    static float4 Invert(float4 color)
+    float4 Invert(float4 color)
     {
         return float4(1.0 - color.rgb, color.a);
     }
@@ -255,7 +262,7 @@ shader MyShader : ComputeColor
 }
 ```
 
-The extension provides completions for static functions in all shaders in scope.
+The extension provides completions for the functions of the modules in scope.
 
 ### Leverage hover documentation
 
@@ -321,7 +328,8 @@ If the tree is empty, check for syntax errors in the file.
 ## See also
 
 * [Custom shaders](custom-shaders.md) - Creating and using shaders in materials
-* [Shading language](shading-language/index.md) - SDSL language reference
-* [Shader classes, mixins and inheritance](shading-language/shader-classes-mixins-and-inheritance.md) - Inheritance concepts
+* [Shading language (SDSL)](shading-language/index.md) - SDSL language reference
+* [Shaders and modules](shading-language/shaders-and-modules.md) - Modules, `import` and `module` members
+* [Inheritance and overrides](shading-language/shader-classes-mixins-and-inheritance.md) - Inheritance concepts
 * [Composition](shading-language/composition.md) - Using shader compositions
 * [Stride Shader Explorer](https://github.com/tebjan/Stride.ShaderExplorer) - Standalone tool for browsing shader hierarchies
