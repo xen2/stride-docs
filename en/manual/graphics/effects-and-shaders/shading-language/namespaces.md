@@ -125,7 +125,27 @@ If your C# code uses `ComputeColorTintKeys.Tint`, nothing changes. If it builds 
 
 ## Shaders and files
 
-A shader is found by the name of its file, so name the file after the shader: `ComputeColorTint` is in `ComputeColorTint.sdsl`, whatever its namespace. A file named after none of the classes it declares is warning [SDSL0245](../../../../diagnostics/SDSL0245.md).
+A shader is found by its full name, whichever file declares it. A file can have any name, and it can declare several shaders, in one or several namespaces:
+
+```cs
+namespace MyGame.Rendering;
+
+shader ComputeColorTint : ComputeColor
+{
+    [Color] float4 Tint;
+
+    override float4 Compute() { return Tint; }
+};
+
+shader ComputeColorFade : ComputeColorTint
+{
+    override float4 Compute() { return base.Compute() * 0.5f; }
+};
+```
+
+Asking for a shader compiles that shader only, so a mistake in `ComputeColorFade` doesn't stop `ComputeColorTint`. A shader can inherit a shader that comes later in its file.
+
+A shader that a file only declares inside an `#if` needs the macro to be defined when something asks for it. Otherwise the error is [SDSL0308](../../../../diagnostics/SDSL0308.md).
 
 ## Duplicate names
 

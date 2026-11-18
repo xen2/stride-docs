@@ -23,7 +23,7 @@ shader ComputeColorPulse : ComputeColor
 };
 ```
 
-- `shader ComputeColorPulse` declares the shader. The name must be the same as the file name (`ComputeColorPulse.sdsl`).
+- `shader ComputeColorPulse` declares the shader. A file is usually named after its shader (`ComputeColorPulse.sdsl`).
 - `: ComputeColor` inherits the engine shader `ComputeColor`. A material property accepts any shader that inherits `ComputeColor`.
 - `override float4 Compute()` replaces the method `ComputeColor.Compute()`. Every override needs the `override` keyword.
 

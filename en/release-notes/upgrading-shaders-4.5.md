@@ -465,6 +465,7 @@ The render stage named `GBuffer` in graphics compositors stays: it draws the `ZP
 | `SDSL0301: X is declared twice: ...` | Rename one or put it in another namespace. To replace a shader, use `[Replaces]`. |
 | `SDSL0302: effect X is declared twice: ...` | Rename one or put it in another namespace. |
 | `SDSL0307: no shader or effect is named X. Did you mean A.X? ...` | Use `XKeys.ShaderName` or `XKeys.EffectName`, or the full name. |
+| ``SDSL0308: F.sdsl doesn't declare X with the macros of this compile: ...`` | Define the macro in the effect that asks for `X`, or move `X` out of the `#if`. |
 | `SDSL0311: 'partial effect' doesn't exist. ...` | Remove `partial` (the project upgrade does it). |
 | `... X was removed from the engine in Stride 4.5. To keep using it, copy it from the sources of Stride 4.4 into your project.` (at the end of [`SDSL0190`](../diagnostics/SDSL0190.md), [`SDSL0191`](../diagnostics/SDSL0191.md), [`SDSL0196`](../diagnostics/SDSL0196.md), `SDSL0110`, or of `Shader X could not be found.` for a string) | See [Removed engine shaders](#removed-engine-shaders). |
 

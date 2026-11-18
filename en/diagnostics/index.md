@@ -25,7 +25,7 @@ The `Stride.Core.CompilerServices` is linked to `Stride.Core`, the diagnostic An
 
 ## Shader compiler (SDSL)
 
-The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.sdsl`) or builds an effect: in the asset build, in Game Studio and at run time. Most codes are errors. A few are warnings: the class still compiles, but it most likely doesn't do what you expect. They are `SDSL0219`, `SDSL0220`, `SDSL0232` and `SDSL0242` to `SDSL0244`, which are about valid HLSL, and `SDSL0245`. To make them fail the build, set the MSBuild property `StrideShaderWarningsAsErrors` to `true` in your project.
+The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.sdsl`) or builds an effect: in the asset build, in Game Studio and at run time. Most codes are errors. A few are warnings: the class still compiles, but it most likely doesn't do what you expect. They are `SDSL0219`, `SDSL0220`, `SDSL0232` and `SDSL0242` to `SDSL0244`, which are about valid HLSL. To make them fail the build, set the MSBuild property `StrideShaderWarningsAsErrors` to `true` in your project.
 
 - [SDSL0045](SDSL0045.md): `stage`, the old name of `module`
 - [SDSL0046](SDSL0046.md): `mixin clone` in an effect
@@ -136,7 +136,6 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0242](SDSL0242.md): `&` without parentheses inside `|`
 - [SDSL0243](SDSL0243.md): `&&` without parentheses inside `||`
 - [SDSL0244](SDSL0244.md): `+` or `-` without parentheses inside `<<` or `>>`
-- [SDSL0245](SDSL0245.md): the file name is not the name of the class
 - [SDSL0246](SDSL0246.md): an override of a module method that is not an extension point
 - [SDSL0247](SDSL0247.md): a module in a composition
 - [SDSL0248](SDSL0248.md): a bare call that two unrelated classes could answer
@@ -156,6 +155,7 @@ The shader compiler reports `SDSLxxxx` codes when it compiles a shader class (`.
 - [SDSL0305](SDSL0305.md): a replacer that does not inherit the original, is another kind, or is `[Root]`
 - [SDSL0306](SDSL0306.md): a replacer that does not forward the generic parameters
 - [SDSL0307](SDSL0307.md): a short name in a string, for a class in a namespace
+- [SDSL0308](SDSL0308.md): a shader that its file only declares inside an `#if` that is off
 - [SDSL0310](SDSL0310.md): an `extend effect` whose effect doesn't exist
 - [SDSL0311](SDSL0311.md): `partial effect`, which is now `effect` or `extend effect`
 - [SDSL0312](SDSL0312.md): an `extend effect` twice in one project, or in the project of the effect
